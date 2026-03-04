@@ -484,7 +484,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.addToCart = (event, name, price) => {
-        const numPrice = parseFloat(price);
+        // Robust price parse: strip all non-numeric characters except dot
+        const numPrice = parseFloat(String(price).replace(/[^0-9.]/g, '')) || 0;
         const existing = cart.find(i => i.name === name);
         if (existing) {
             existing.quantity += 1;
@@ -495,7 +496,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Uçan ikon animasyonu
         if (event && cartFab) {
-            const btn = event.currentTarget || event.target;
+            // Closest button'u al - icon'a tıklanınca event.target icon olabilir
+            const btn = (event.target && event.target.closest)
+                ? (event.target.closest('button') || event.target)
+                : event.target;
+            if (!btn || !btn.getBoundingClientRect) return;
             const btnRect = btn.getBoundingClientRect();
             const fabRect = cartFab.getBoundingClientRect();
 
@@ -615,18 +620,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             db.ref('cms/orders').push(newOrder)
                 .then(() => {
+                    checkoutBtn.innerHTML = 'Siparişi Tamamla';
+                    checkoutBtn.disabled = false;
                     alert('Siparişiniz başarıyla alındı! Teşekkür ederiz.');
                     cart = [];
                     updateCartUI();
                     cartSidebar.classList.remove('open');
                 })
                 .catch(err => {
-                    console.error("Sipariş hatası:", err);
-                    alert("Sipariş gönderilirken hata oluştu. Lütfen tekrar deneyin. Veritabanı kurallarınızı (Rules) kontrol edin.");
-                })
-                .finally(() => {
                     checkoutBtn.innerHTML = 'Siparişi Tamamla';
                     checkoutBtn.disabled = false;
+                    console.error("Sipariş hatası:", err);
+                    alert('Sipariş gönderilirken hata oluştu: ' + (err.message || err));
                 });
         };
     }

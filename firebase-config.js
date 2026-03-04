@@ -15,6 +15,7 @@ const _i = atob("MTo0NzE5MjYxOTA5MTg6d2ViOjgxYzE1YTgzM2YwZDcyMjk4ZDZiNDc=");
 const firebaseConfig = {
     apiKey: _a,
     authDomain: _d,
+    databaseURL: "https://restoran-yonetim-default-rtdb.firebaseio.com",
     projectId: _p,
     storageBucket: _s,
     messagingSenderId: _m,
