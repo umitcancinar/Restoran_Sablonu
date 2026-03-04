@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RESTAURANT YÖNETİM | Premium Restoran Deneyimi</title>
+    <meta name="description" content="Sıra dışı lezzetler, usta şefler ve unutulmaz bir deneyim.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div id="preloader">
+        <div class="loader-content">
+            <div class="plate-loader">
+                <i class="fas fa-utensils spinning-icon"></i>
+            </div>
+            <h2 class="loader-text">Restoran Yönetim<br><span>Hazırlanıyor...</span></h2>
+        </div>
+    </div>
+
+    <header class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <i class="fas fa-crown"></i> RESTAURANT YÖNETİM<span>.</span>
+            </a>
+
+            <nav class="main-nav">
+                <ul class="nav-links">
+                    <li><a href="#hero" class="nav-link active">Ana Sayfa</a></li>
+                    <li><a href="#about" class="nav-link">Hakkımızda</a></li>
+                    <li><a href="#menu" class="nav-link">Menü</a></li>
+                    <li><a href="#gallery" class="nav-link">Galeri</a></li>
+                    <li><a href="#reservation" class="nav-link">Rezervasyon</a></li>
+                </ul>
+            </nav>
+
+            <div class="nav-actions">
+                <button id="theme-toggle" class="theme-btn" aria-label="Tema Değiştir">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <a href="admin.html" class="admin-link" aria-label="Yönetici Paneli" target="_blank">
+                    <i class="fas fa-user-shield"></i>
+                </a>
+                <button class="mobile-menu-btn" id="mobile-menu-btn">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="mobile-menu-overlay" id="mobile-menu">
+        <div class="mobile-menu-close" id="mobile-menu-close"><i class="fas fa-times"></i></div>
+        <ul class="mobile-nav-links">
+            <li><a href="#hero">Ana Sayfa</a></li>
+            <li><a href="#about">Hakkımızda</a></li>
+            <li><a href="#menu">Menü</a></li>
+            <li><a href="#gallery">Galeri</a></li>
+            <li><a href="#reservation">Rezervasyon</a></li>
+        </ul>
+    </div>
+
+    <section id="hero" class="hero-section">
+        <div class="hero-bg parallax-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <div class="hero-text-box fade-in-up">
+                <span class="hero-subtitle" id="dyn-hero-sub">Mükemmelliğin Tadı</span>
+                <h1 id="dyn-hero-title">Lezzetin <br><span class="highlight">Sanatla Buluştuğu</span> Yer</h1>
+                <p id="dyn-hero-desc">Dünya mutfağının seçkin lezzetleri, usta şeflerimizin dokunuşuyla yeniden
+                    şekilleniyor. Duyularınıza hitap eden bu yolculuğa davetlisiniz.</p>
+                <div class="hero-buttons">
+                    <a href="#menu" class="btn btn-primary btn-glow">Menüyü İncele</a>
+                    <a href="#reservation" class="btn btn-outline-light">Masa Ayırt</a>
+                </div>
+            </div>
+            <div class="hero-scroll-indicator">
+                <a href="#about">
+                    <span class="mouse"><span class="wheel"></span></span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about-section section-padding">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-text slide-in-left">
+                    <div class="section-heading">
+                        <span class="subtitle">Hikayemiz</span>
+                        <h2 id="dyn-about-title">Tutkuyla Hazırlanan Her Tabak</h2>
+                    </div>
+                    <p class="lead-text" id="dyn-about-desc">2010 yılından beri, en taze yerel malzemeleri uluslararası
+                        tekniklerle harmanlayarak misafirlerimize unutulmaz deneyimler sunuyoruz.</p>
+                    <p>Mutfak şefimiz ve ekibi, mevsimsel ürünleri sanata dönüştürmek için her gün aynı heyecanla
+                        mutfağa giriyor. RESTAURANT YÖNETİM, sadece yemek yenilen bir yer değil, lezzetin kutlandığı bir
+                        gastronomi
+                        merkezidir.</p>
+
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <i class="fas fa-leaf"></i>
+                            <span>%100 Organik & Taze Ürünler</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-award"></i>
+                            <span>Ödüllü Şef Kadrosu</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-wine-glass-alt"></i>
+                            <span>Zengin Şarap Kavı</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-images slide-in-right">
+                    <div class="img-wrapper main-img">
+                        <img id="dyn-about-img"
+                            src="https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                            alt="Şefimiz">
+                    </div>
+                    <div class="img-wrapper sub-img">
+                        <img src="https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                            alt="Restoran İçi">
+                    </div>
+                    <div class="experience-badge">
+                        <span class="years">15+</span>
+                        <span class="text">Yıllık<br>Tecrübe</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="menu" class="menu-section section-padding bg-alt">
+        <div class="container">
+            <div class="section-heading text-center fade-in-up">
+                <span class="subtitle">Keşfedin</span>
+                <h2>Özel Menümüz</h2>
+                <div class="heading-line"></div>
+            </div>
+
+            <div class="menu-filters fade-in-up delay-1">
+                <button class="filter-btn active" data-filter="all">Tümü</button>
+                <button class="filter-btn" data-filter="starters">Başlangıçlar</button>
+                <button class="filter-btn" data-filter="mains">Ana Yemekler</button>
+                <button class="filter-btn" data-filter="desserts">Tatlılar</button>
+                <button class="filter-btn" data-filter="drinks">İçecekler</button>
+            </div>
+
+            <div class="menu-grid" id="menu-grid">
+                <div class="menu-item menu-card fade-in-up" data-category="mains">
+                    <div class="menu-img">
+                        <img src="https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                            alt="Antrikot">
+                        <div class="menu-badge">Şefin Tavsiyesi</div>
+                    </div>
+                    <div class="menu-content">
+                        <div class="menu-title-row">
+                            <h3>Izgara Dana Antrikot</h3>
+                            <span class="price">₺450</span>
+                        </div>
+                        <p class="menu-desc">Közlenmiş kuşkonmaz, trüf mantarlı patates püresi ve özel demi-glace sos
+                            ile.</p>
+                        <button class="btn-add-cart"><i class="fas fa-plus"></i> Sipariş Ekle</button>
+                    </div>
+                </div>
+
+                <div class="menu-item menu-card fade-in-up" data-category="desserts">
+                    <div class="menu-img">
+                        <img src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                            alt="Tiramisu">
+                        <div class="menu-badge hot">Yeni</div>
+                    </div>
+                    <div class="menu-content">
+                        <div class="menu-title-row">
+                            <h3>Orijinal İtalyan Tiramisu</h3>
+                            <span class="price">₺180</span>
+                        </div>
+                        <p class="menu-desc">Mascarpone peyniri, espresso ile ıslatılmış kedi dili ve kakao tozu.</p>
+                        <button class="btn-add-cart"><i class="fas fa-plus"></i> Sipariş Ekle</button>
+                    </div>
+                </div>
+
+                <div class="menu-item menu-card fade-in-up" data-category="drinks">
+                    <div class="menu-img">
+                        <img src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                            alt="Kokteyl">
+                    </div>
+                    <div class="menu-content">
+                        <div class="menu-title-row">
+                            <h3>RY Signature Cocktail</h3>
+                            <span class="price">₺250</span>
+                        </div>
+                        <p class="menu-desc">Cin, mürver çiçeği likörü, taze lime suyu ve salatalık özütü.</p>
+                        <button class="btn-add-cart"><i class="fas fa-plus"></i> Sipariş Ekle</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5 fade-in-up">
+                <a href="#" class="btn btn-outline">Tüm Menüyü İndir (PDF)</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="promo-section">
+        <div class="promo-bg"></div>
+        <div class="container text-center promo-content fade-in-up">
+            <h2 id="dyn-promo-title">Hafta Sonuna Özel <span class="highlight">%20 İndirim</span></h2>
+            <p>Aile boyu menülerde ve seçili şaraplarda geçerli muhteşem fırsatı kaçırmayın.</p>
+            <a href="#reservation" class="btn btn-primary btn-glow btn-lg mt-3">Hemen Masanı Ayırt</a>
+        </div>
+    </section>
+
+    <section id="gallery" class="gallery-section section-padding">
+        <div class="container">
+            <div class="section-heading text-center fade-in-up">
+                <span class="subtitle">Atmosfer</span>
+                <h2>RY Galerisi</h2>
+                <div class="heading-line"></div>
+            </div>
+
+            <div class="gallery-grid">
+                <div class="gallery-item w-2 h-2 fade-in-up">
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                        alt="Galeri 1">
+                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
+                </div>
+                <div class="gallery-item fade-in-up delay-1">
+                    <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                        alt="Galeri 2">
+                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
+                </div>
+                <div class="gallery-item fade-in-up delay-2">
+                    <img src="https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                        alt="Galeri 3">
+                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
+                </div>
+                <div class="gallery-item w-2 fade-in-up">
+                    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                        alt="Galeri 4">
+                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
+                </div>
+                <div class="gallery-item fade-in-up delay-1">
+                    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80"
+                        alt="Galeri 5">
+                    <div class="gallery-overlay"><i class="fas fa-search-plus"></i></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="reservation" class="reservation-section section-padding bg-alt">
+        <div class="container">
+            <div class="reservation-wrapper box-shadow-lg">
+                <div class="res-info bg-primary text-white">
+                    <h3>İletişim Bilgileri</h3>
+                    <p>Özel günleriniz ve grup rezervasyonlarınız için bizimle doğrudan iletişime geçebilirsiniz.</p>
+                    <ul class="res-contact-list">
+                        <li><i class="fas fa-map-marker-alt"></i> RY Sokak No:12, Beşiktaş/İstanbul</li>
+                        <li><i class="fas fa-phone-alt"></i> +90 554 156 38 62</li>
+                        <li><i class="fas fa-envelope"></i> info@restoranyonetim.com</li>
+                        <li><i class="fas fa-clock"></i> Her Gün: 10:00 - 23:30</li>
+                    </ul>
+                </div>
+                <div class="res-form-container">
+                    <div class="section-heading">
+                        <h2>Masa Ayırtın</h2>
+                    </div>
+                    <form id="reservation-form" class="reservation-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="res-name">Adınız Soyadınız</label>
+                                <input type="text" id="res-name" class="form-control" placeholder="Örn: Ümitcan Çınar"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label for="res-phone">Telefon Numaranız</label>
+                                <input type="tel" id="res-phone" class="form-control" placeholder="05XX XXX XX XX"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="res-date">Tarih</label>
+                                <input type="date" id="res-date" class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="res-time">Saat</label>
+                                <select id="res-time" class="form-control" required>
+                                    <option value="">Seçiniz</option>
+                                    <option value="18:00">18:00</option>
+                                    <option value="19:00">19:00</option>
+                                    <option value="20:00">20:00</option>
+                                    <option value="21:00">21:00</option>
+                                    <option value="22:00">22:00</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="res-guests">Kişi Sayısı</label>
+                                <select id="res-guests" class="form-control" required>
+                                    <option value="1">1 Kişi</option>
+                                    <option value="2">2 Kişi</option>
+                                    <option value="3">3 Kişi</option>
+                                    <option value="4">4 Kişi</option>
+                                    <option value="5+">5+ Kişi</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group w-100">
+                            <label for="res-note">Özel İstekleriniz (Opsiyonel)</label>
+                            <textarea id="res-note" class="form-control" rows="3"
+                                placeholder="Alerji durumu, kutlama vb."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block mt-3">Rezervasyon Talebi Gönder</button>
+                        <div id="form-message" class="form-message"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <a href="https://wa.me/905541563862?text=Merhaba,%20web%20sitenizden%20yazıyorum.%20Bilgi%20almak%20istiyorum."
+        target="_blank" class="whatsapp-float" aria-label="WhatsApp İletişim">
+        <i class="fab fa-whatsapp"></i>
+        <span class="tooltip-text">Bize Ulaşın</span>
+    </a>
+
+    <button id="scrollTop" class="scroll-top-btn"><i class="fas fa-arrow-up"></i></button>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top">
+                <div class="footer-col brand-col">
+                    <a href="#" class="footer-logo">
+                        <i class="fas fa-crown"></i> RESTAURANT YÖNETİM<span>.</span>
+                    </a>
+                    <p class="footer-desc">Gastronomi dünyasında kalite ve tutkunun birleştiği nokta. Her tabakta bir
+                        sanat eseri, her yudumda bir hikaye.</p>
+                    <div class="social-links">
+                        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-icon"><i class="fab fa-tripadvisor"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Hızlı Menü</h4>
+                    <ul class="footer-links">
+                        <li><a href="#about"><i class="fas fa-angle-right"></i> Hikayemiz</a></li>
+                        <li><a href="#menu"><i class="fas fa-angle-right"></i> Lezzetlerimiz</a></li>
+                        <li><a href="#gallery"><i class="fas fa-angle-right"></i> Atmosfer</a></li>
+                        <li><a href="#reservation"><i class="fas fa-angle-right"></i> Masa Ayırt</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Yasal</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" id="btn-gizlilik"><i class="fas fa-angle-right"></i> Gizlilik Politikası</a>
+                        </li>
+                        <li><a href="#" id="btn-sartlar"><i class="fas fa-angle-right"></i> Kullanım Şartları</a></li>
+                        <li><a href="#" id="btn-cerez"><i class="fas fa-angle-right"></i> Çerez Politikası</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col newsletter-col">
+                    <h4>Bültene Katılın</h4>
+                    <p>Yeni menüler ve kampanyalardan ilk siz haberdar olun.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="E-posta adresiniz..." required>
+                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Restaurant Yönetim. Tüm hakları saklıdır.</p>
+                <div class="developer-signature">
+                    <p>Designed And Developed By
+                        <span class="cooking-author">
+                            <span class="pan"><i class="fas fa-fire"></i></span>
+                            <span class="letters">
+                                <span class="letter">U</span><span class="letter">M</span><span
+                                    class="letter">İ</span><span class="letter">T</span><span
+                                    class="letter">C</span><span class="letter">A</span><span class="letter">N</span>
+                                &nbsp;<span class="letter">Ç</span><span class="letter">I</span><span
+                                    class="letter">N</span><span class="letter">A</span><span class="letter">R</span>
+                            </span>
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="modal-gizlilik" class="legal-modal" style="display: none;">
+        <div class="legal-modal-content box-shadow-lg">
+            <span class="close-modal">&times;</span>
+            <h2>Gizlilik Politikası</h2>
+            <div class="legal-text">
+                <p><strong>1. Veri Toplama:</strong> Sitemiz üzerinden yaptığınız rezervasyon işlemleri sırasında
+                    adınız, soyadınız, telefon numaranız ve e-posta adresiniz gibi kişisel verileriniz toplanmaktadır.
+                </p>
+                <p><strong>2. Veri Kullanımı:</strong> Toplanan veriler yalnızca rezervasyonunuzun onaylanması, size
+                    hizmet sunulması ve yasal zorunlulukların yerine getirilmesi amacıyla kullanılır. Üçüncü şahıslarla
+                    asla reklam amacıyla paylaşılmaz.</p>
+                <p><strong>3. Veri Güvenliği:</strong> RESTAURANT YÖNETİM, verilerinizin güvenliğini sağlamak amacıyla
+                    güncel teknolojik güvenlik standartlarını kullanmaktadır (SSL şifreleme vb.).</p>
+                <p><strong>4. Haklarınız:</strong> KVKK kapsamında, verilerinizin silinmesini veya düzeltilmesini talep
+                    etme hakkına sahipsiniz. Bunun için info@restoranyonetim.com adresinden bize ulaşabilirsiniz.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-sartlar" class="legal-modal" style="display: none;">
+        <div class="legal-modal-content box-shadow-lg">
+            <span class="close-modal">&times;</span>
+            <h2>Kullanım Şartları</h2>
+            <div class="legal-text">
+                <p><strong>1. Genel Kurallar:</strong> RESTAURANT YÖNETİM web sitesini kullanarak bu şartları kabul
+                    etmiş
+                    sayılırsınız. Site içeriği yalnızca bilgilendirme amaçlıdır.</p>
+                <p><strong>2. Rezervasyonlar:</strong> Web sitemiz üzerinden yapılan rezervasyon talepleri, restoran
+                    onayından sonra kesinleşir. Restoran, operasyonel sebeplerle rezervasyon iptali hakkını saklı tutar.
+                </p>
+                <p><strong>3. Fikri Mülkiyet:</strong> Bu sitede yer alan tüm metin, görsel, logo ve kod yapısı (Umitcan
+                    Cınar tarafından geliştirilmiş mimari hariç) RESTAURANT YÖNETİM'e aittir, kopyalanamaz.</p>
+                <p><strong>4. Değişiklik Hakları:</strong> RY, menü içeriklerini, fiyatları ve web sitesi kullanım
+                    şartlarını önceden bildirmeksizin değiştirme hakkına sahiptir.</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-cerez" class="legal-modal" style="display: none;">
+        <div class="legal-modal-content box-shadow-lg">
+            <span class="close-modal">&times;</span>
+            <h2>Çerez (Cookie) Politikası</h2>
+            <div class="legal-text">
+                <p><strong>1. Çerez Nedir?</strong> Çerezler, web sitemizi ziyaret ettiğinizde tarayıcınız aracılığıyla
+                    cihazınıza kaydedilen küçük metin dosyalarıdır.</p>
+                <p><strong>2. Kullanım Amacımız:</strong> RESTAURANT YÖNETİM olarak, sitemizdeki Dark/Light mod
+                    tercihlerinizi
+                    hatırlamak, site performansını analiz etmek ve daha iyi bir kullanıcı deneyimi sunmak için zararsız,
+                    temel düzey çerezler (localStorage) kullanmaktayız.</p>
+                <p><strong>3. Üçüncü Parti Çerezler:</strong> Sitemiz reklam veya takip amaçlı 3. parti çerezleri
+                    (Piksel, İzleyici) kullanmaz. Sadece fonksiyonel veriler cihazınızda tutulur.</p>
+                <p><strong>4. Yönetim:</strong> Çerez kullanımını tarayıcı ayarlarınızdan dilediğiniz zaman
+                    kapatabilirsiniz. Ancak bu durumda tema ayarlarınız gibi tercihlerin kaydedilmeyeceğini unutmayınız.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (Compat) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <!-- Script -->
+    <script src="app.js"></script>
+</body>
+
+</html>
