@@ -785,6 +785,7 @@ body.admin-body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px;
+    min-width: 0;
 }
 
 /* ============================================
@@ -795,6 +796,8 @@ body.admin-body {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 24px;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .edit-card h3 {
@@ -1132,6 +1135,9 @@ body.admin-body {
     gap: 12px;
     cursor: grab;
     transition: all var(--transition);
+    min-width: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .sortable-item:hover {
