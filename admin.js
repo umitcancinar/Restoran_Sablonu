@@ -8,9 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========================================
     // 1. AUTH
     // ========================================
-    let VALID_USER = window.DB_ADMIN_U || 'cinarx04@gmail.com';
-    let VALID_PASS = window.DB_ADMIN_P || '123456789abc.';
-
     const loginOverlay = document.getElementById('login-overlay');
     const adminDash = document.getElementById('admin-dashboard');
     const loginBtn = document.getElementById('login-btn');
@@ -26,7 +23,17 @@ document.addEventListener('DOMContentLoaded', () => {
         initDashboard();
     }
 
-    if (sessionStorage.getItem('gourmet_admin_logged') === 'true') showDashboard();
+    firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+            showDashboard();
+        } else {
+            adminDash.classList.add('hidden');
+            loginOverlay.classList.remove('hidden');
+            setTimeout(() => { loginOverlay.classList.add('active'); }, 10);
+            emailInput.value = '';
+            passInput.value = '';
+        }
+    });
 
     loginBtn.addEventListener('click', handleLogin);
     passInput.addEventListener('keypress', e => { if (e.key === 'Enter') handleLogin(); });
@@ -34,24 +41,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleLogin() {
         const user = emailInput.value.trim();
         const pass = passInput.value.trim();
-        if (user === VALID_USER && pass === VALID_PASS) {
-            errorMsg.textContent = '';
-            sessionStorage.setItem('gourmet_admin_logged', 'true');
-            showDashboard();
-        } else {
-            errorMsg.textContent = 'Hatalı e-posta veya şifre!';
-            document.querySelector('.login-box').classList.add('shake');
-            setTimeout(() => document.querySelector('.login-box').classList.remove('shake'), 500);
-        }
+        errorMsg.textContent = 'Giriş yapılıyor...';
+        firebase.auth().signInWithEmailAndPassword(user, pass)
+            .then(() => {
+                errorMsg.textContent = '';
+            })
+            .catch(error => {
+                errorMsg.textContent = 'Hatalı e-posta veya şifre!';
+                document.querySelector('.login-box').classList.add('shake');
+                setTimeout(() => document.querySelector('.login-box').classList.remove('shake'), 500);
+            });
     }
 
     logoutBtn.addEventListener('click', () => {
-        sessionStorage.removeItem('gourmet_admin_logged');
-        adminDash.classList.add('hidden');
-        loginOverlay.classList.remove('hidden');
-        loginOverlay.classList.add('active');
-        emailInput.value = '';
-        passInput.value = '';
+        firebase.auth().signOut();
     });
 
     // ========================================
@@ -60,6 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const panelNames = {
         'panel-overview': 'Özet Tablo',
         'panel-reservations': 'Rezervasyonlar',
+        'panel-orders': 'Siparişler',
         'panel-navbar': 'Navigasyon Menüsü',
         'panel-hero': 'Ana Ekran (Hero)',
         'panel-about': 'Hakkımızda',
@@ -131,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. FIREBASE STATE & INIT
     // ========================================
     let appState = {
-        settings: {}, res: {}, nav: [], menu: [], gallery: []
+        settings: {}, res: {}, orders: {}, nav: [], menu: [], gallery: []
     };
 
     function initDashboard() {
@@ -144,6 +148,10 @@ document.addEventListener('DOMContentLoaded', () => {
         db.ref('cms/reservations').on('value', snap => {
             appState.res = snap.val() || {};
             loadReservations(); loadStats();
+        });
+        db.ref('cms/orders').on('value', snap => {
+            appState.orders = snap.val() || {};
+            loadOrders(); loadStats();
         });
         db.ref('cms/navlinks').on('value', snap => {
             appState.nav = snap.val() || defaultNavLinks;
@@ -162,8 +170,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========================================
     // 6. STATS
     // ========================================
+
+    // XSS escape helper (admin render layer)
+    function esc(str) {
+        if (str == null) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     function loadStats() {
         const resArr = Object.values(appState.res);
+        const ordersArr = Object.values(appState.orders);
         const menuCount = appState.menu.length;
         const galCount = appState.gallery.length;
         const navCount = appState.nav.length;
@@ -176,6 +197,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const badge = document.getElementById('res-badge');
         if (badge) badge.textContent = resArr.length;
 
+        const ordersBadge = document.getElementById('orders-badge');
+        if (ordersBadge) ordersBadge.textContent = ordersArr.length;
+
         const recentEl = document.getElementById('recent-reservations');
         if (recentEl) {
             if (resArr.length === 0) {
@@ -185,8 +209,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 recentEl.innerHTML = last3.map(r => `
                     <div class="recent-res-item">
                         <div class="recent-res-info">
-                            <strong>${r.name}</strong>
-                            <span>${r.date} ${r.time} — ${r.guests} kişi</span>
+                            <strong>${esc(r.name)}</strong>
+                            <span>${esc(r.date)} ${esc(r.time)} — ${esc(r.guests)} kişi</span>
                         </div>
                         <span class="status-badge">Bekliyor</span>
                     </div>
@@ -208,14 +232,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         tbody.innerHTML = resEntries.map(([key, r]) => `
             <tr>
-                <td><strong>${r.date}</strong><br>${r.time}</td>
-                <td>${r.name}</td>
-                <td>${r.phone}</td>
-                <td>${r.guests}</td>
-                <td>${r.note}</td>
+                <td><strong>${esc(r.date)}</strong><br>${esc(r.time)}</td>
+                <td>${esc(r.name)}</td>
+                <td>${esc(r.phone)}</td>
+                <td>${esc(r.guests)}</td>
+                <td>${esc(r.note)}</td>
                 <td><span class="status-badge">Bekliyor</span></td>
                 <td>
-                    <button class="btn-icon-danger" onclick="deleteReservation('${key}')" title="Sil">
+                    <button class="btn-icon-danger" onclick="deleteReservation('${esc(key)}')" title="Sil">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
@@ -236,6 +260,52 @@ document.addEventListener('DOMContentLoaded', () => {
         db.ref('cms/reservations').remove();
         showToast('Geçmiş temizlendi!');
     });
+
+    // ========================================
+    // 7.5. ORDERS
+    // ========================================
+    function loadOrders() {
+        const tbody = document.getElementById('orders-tbody');
+        if (!tbody) return;
+        const ordersEntries = Object.entries(appState.orders).sort((a, b) => b[1].timestamp - a[1].timestamp);
+
+        if (ordersEntries.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" class="empty-cell">Henüz sipariş bulunmuyor.</td></tr>`;
+            return;
+        }
+        tbody.innerHTML = ordersEntries.map(([key, o]) => `
+            <tr>
+                <td><strong>${esc(o.date)}</strong><br>${esc(o.time)}</td>
+                <td>${esc(o.customerName)}</td>
+                <td>${esc(o.customerPhone)}</td>
+                <td>₺${esc(o.totalPrice)}</td>
+                <td><small>${Array.isArray(o.items) ? o.items.map(i => esc(i.name) + ' (x' + esc(i.quantity) + ')').join(', ') : ''}</small></td>
+                <td><span class="status-badge">Hazırlanıyor</span></td>
+                <td>
+                    <button class="btn-icon-danger" onclick="deleteOrder('${esc(key)}')" title="Sil">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    window.deleteOrder = async (key) => {
+        const ok = await showConfirm('Siparişi Sil', 'Bu siparişi silmek istediğinize emin misiniz?');
+        if (!ok) return;
+        db.ref('cms/orders/' + key).remove();
+        showToast('Sipariş silindi!');
+    };
+
+    const clearOrdersBtn = document.getElementById('clear-orders-btn');
+    if (clearOrdersBtn) {
+        clearOrdersBtn.addEventListener('click', async () => {
+            const ok = await showConfirm('Tüm Geçmişi Temizle', 'Tüm sipariş verilerini silmek istediğinize emin misiniz?');
+            if (!ok) return;
+            db.ref('cms/orders').remove();
+            showToast('Sipariş geçmişi temizlendi!');
+        });
+    }
 
     // ========================================
     // 8. NAVBAR LINKS

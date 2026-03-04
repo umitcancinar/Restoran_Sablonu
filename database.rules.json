@@ -1,0 +1,30 @@
+{
+  "rules": {
+    "cms": {
+      "reservations": {
+        ".read": "auth != null",
+        ".write": "auth != null || !data.exists()"
+      },
+      "orders": {
+        ".read": "auth != null",
+        ".write": "auth != null || !data.exists()"
+      },
+      "settings": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "navlinks": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "gallery": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "menu": {
+        ".read": true,
+        ".write": "auth != null"
+      }
+    }
+  }
+}

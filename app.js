@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="price">&#8378;${item.price}</span>
                             </div>
                             <p class="menu-desc">${item.desc}</p>
-                            <button class="btn-add-cart" onclick="addToCart('${item.name.replace(/'/g, "\\'").replace(/"/g, "&quot;")}', '${item.price}')"><i class="fas fa-plus"></i> Siparis Ekle</button>
+                            <button class="btn-add-cart" onclick="addToCart(event, '${item.name.replace(/'/g, "\\'").replace(/"/g, "&quot;")}', '${item.price}')"><i class="fas fa-plus"></i> Siparis Ekle</button>
                         </div>
                     </div>`;
                     });
@@ -376,13 +376,19 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Isleniyor...';
             btn.disabled = true;
 
+            // Sipariş/Rezervasyon güvenlik sanitization işlemi
+            function sanitizeStr(str) {
+                if (!str) return "";
+                return str.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            }
+
             const newRes = {
-                name: document.getElementById('res-name').value,
-                phone: document.getElementById('res-phone').value,
-                date: document.getElementById('res-date').value,
-                time: document.getElementById('res-time').value,
-                guests: document.getElementById('res-guests').value,
-                note: document.getElementById('res-note').value || "Yok",
+                name: sanitizeStr(document.getElementById('res-name').value),
+                phone: sanitizeStr(document.getElementById('res-phone').value),
+                date: sanitizeStr(document.getElementById('res-date').value),
+                time: sanitizeStr(document.getElementById('res-time').value),
+                guests: sanitizeStr(document.getElementById('res-guests').value),
+                note: sanitizeStr(document.getElementById('res-note').value) || "Yok",
                 timestamp: new Date().getTime()
             };
 
@@ -455,5 +461,173 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollTopBtn.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
+    }
+
+    // ==========================================
+    // 9. SEPET ALTYAPISI
+    // ==========================================
+    let cart = [];
+    const cartSidebar = document.getElementById('cart-sidebar');
+    const closeCartBtn = document.getElementById('close-cart');
+    const cartFab = document.getElementById('cart-fab');
+    const cartItemsDiv = document.getElementById('cart-items');
+    const cartTotalPrice = document.getElementById('cart-total-price');
+    const cartCount = document.getElementById('cart-count');
+
+    if (cartFab && cartSidebar) {
+        cartFab.addEventListener('click', () => {
+            cartSidebar.classList.add('open');
+        });
+        closeCartBtn.addEventListener('click', () => {
+            cartSidebar.classList.remove('open');
+        });
+    }
+
+    window.addToCart = (event, name, price) => {
+        const numPrice = parseFloat(price);
+        const existing = cart.find(i => i.name === name);
+        if (existing) {
+            existing.quantity += 1;
+        } else {
+            cart.push({ name, price: numPrice, quantity: 1 });
+        }
+        updateCartUI();
+
+        // Uçan ikon animasyonu
+        if (event && cartFab) {
+            const btn = event.currentTarget || event.target;
+            const btnRect = btn.getBoundingClientRect();
+            const fabRect = cartFab.getBoundingClientRect();
+
+            const flyEl = document.createElement('div');
+            flyEl.classList.add('cart-fly-item');
+            flyEl.innerHTML = '<i class="fas fa-shopping-basket"></i>';
+            flyEl.style.left = (btnRect.left + btnRect.width / 2 - 20) + 'px';
+            flyEl.style.top = (btnRect.top + btnRect.height / 2 - 20) + 'px';
+            document.body.appendChild(flyEl);
+
+            const xDist = (fabRect.left + fabRect.width / 2) - (btnRect.left + btnRect.width / 2);
+            const yDist = (fabRect.top + fabRect.height / 2) - (btnRect.top + btnRect.height / 2);
+
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    flyEl.style.transform = `translate(${xDist}px, ${yDist}px) scale(0.1)`;
+                    flyEl.style.opacity = '0';
+                    flyEl.style.transition = 'transform 0.75s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.75s';
+                });
+            });
+
+            setTimeout(() => {
+                flyEl.remove();
+                if (cartFab) {
+                    cartFab.classList.add('bounce');
+                    setTimeout(() => cartFab.classList.remove('bounce'), 300);
+                }
+            }, 780);
+        } else if (cartFab) {
+            cartFab.classList.add('bounce');
+            setTimeout(() => cartFab.classList.remove('bounce'), 300);
+        }
+    };
+
+    window.removeFromCart = (index) => {
+        cart.splice(index, 1);
+        updateCartUI();
+    };
+
+    window.updateCartQuantity = (index, delta) => {
+        cart[index].quantity += delta;
+        if (cart[index].quantity <= 0) {
+            cart.splice(index, 1);
+        }
+        updateCartUI();
+    };
+
+    function updateCartUI() {
+        if (!cartItemsDiv) return;
+
+        if (cart.length === 0) {
+            cartItemsDiv.innerHTML = '<p style="text-align:center;color:var(--text-muted)">Sepetiniz boş.</p>';
+            cartCount.textContent = '0';
+            cartTotalPrice.textContent = '₺0';
+            return;
+        }
+
+        let total = 0;
+        let cCount = 0;
+        cartItemsDiv.innerHTML = cart.map((item, idx) => {
+            total += (item.price * item.quantity);
+            cCount += item.quantity;
+            return `
+                <div class="cart-item" style="border-bottom:1px solid #eee; margin-bottom:10px; padding-bottom:10px;">
+                    <div class="cart-item-info" style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <h4 style="margin:0; font-size:0.95rem;">${item.name}</h4>
+                        <span style="font-weight:600;">₺${item.price}</span>
+                    </div>
+                    <div class="cart-item-actions" style="display:flex; align-items:center; gap:10px;">
+                        <button onclick="updateCartQuantity(${idx}, -1)" style="padding:2px 8px; border:1px solid #ddd; background:#fff; border-radius:4px; cursor:pointer;">-</button>
+                        <span>${item.quantity}</span>
+                        <button onclick="updateCartQuantity(${idx}, 1)" style="padding:2px 8px; border:1px solid #ddd; background:#fff; border-radius:4px; cursor:pointer;">+</button>
+                        <button class="remove-btn" onclick="removeFromCart(${idx})" style="background:var(--danger); color:white; border:none; padding:4px 8px; border-radius:4px; cursor:pointer; margin-left:auto;"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        cartCount.textContent = cCount;
+        cartTotalPrice.textContent = '₺' + total.toFixed(2);
+    }
+
+    // Checkout form (in cart footer)
+    const checkoutBtn = document.querySelector('.cart-footer .btn-primary');
+    if (checkoutBtn) {
+        checkoutBtn.onclick = () => {
+            if (cart.length === 0) {
+                alert('Sepetiniz boş!');
+                return;
+            }
+
+            const custNameRaw = prompt("Adınız Soyadınız:");
+            if (!custNameRaw) return;
+            const custPhoneRaw = prompt("Telefon Numaranız:");
+            if (!custPhoneRaw) return;
+
+            // XSS sanitization
+            const sanitize = str => str.replace(/</g, '&lt;').replace(/>/g, '&gt;').trim();
+            const custName = sanitize(custNameRaw);
+            const custPhone = sanitize(custPhoneRaw);
+            if (!custName || !custPhone) return;
+
+            checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> İşleniyor...';
+            checkoutBtn.disabled = true;
+
+            const orderTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+            const newOrder = {
+                customerName: custName,
+                customerPhone: custPhone,
+                items: cart,
+                totalPrice: orderTotal,
+                timestamp: new Date().getTime(),
+                date: new Date().toLocaleDateString('tr-TR'),
+                time: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' })
+            };
+
+            db.ref('cms/orders').push(newOrder)
+                .then(() => {
+                    alert('Siparişiniz başarıyla alındı! Teşekkür ederiz.');
+                    cart = [];
+                    updateCartUI();
+                    cartSidebar.classList.remove('open');
+                })
+                .catch(err => {
+                    console.error("Sipariş hatası:", err);
+                    alert("Sipariş gönderilirken hata oluştu. Lütfen tekrar deneyin. Veritabanı kurallarınızı (Rules) kontrol edin.");
+                })
+                .finally(() => {
+                    checkoutBtn.innerHTML = 'Siparişi Tamamla';
+                    checkoutBtn.disabled = false;
+                });
+        };
     }
 });

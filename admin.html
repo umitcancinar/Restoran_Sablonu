@@ -66,6 +66,10 @@
                         <i class="fas fa-calendar-check"></i><span>Rezervasyonlar</span>
                         <span class="nav-badge" id="res-badge">0</span>
                     </a>
+                    <a class="nav-item" data-panel="panel-orders">
+                        <i class="fas fa-shopping-bag"></i><span>Siparişler</span>
+                        <span class="nav-badge" id="orders-badge">0</span>
+                    </a>
                 </div>
                 <div class="nav-group">
                     <span class="nav-group-label">SİTE İÇERİĞİ</span>
@@ -234,6 +238,33 @@
                                 </tr>
                             </thead>
                             <tbody id="reservations-tbody">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- ORDERS -->
+                <section class="panel hidden" id="panel-orders">
+                    <div class="panel-header">
+                        <h1>Siparişler</h1>
+                        <button class="btn-danger" id="clear-orders-btn">
+                            <i class="fas fa-trash"></i> Geçmişi Temizle
+                        </button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Tarih / Saat</th>
+                                    <th>Müşteri</th>
+                                    <th>Telefon</th>
+                                    <th>Tutar</th>
+                                    <th>Sipariş Detayı</th>
+                                    <th>Durum</th>
+                                    <th>İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-tbody">
                             </tbody>
                         </table>
                     </div>
@@ -683,6 +714,7 @@
 
     <!-- Firebase SDK (Compat) -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-database-compat.js"></script>
     <script src="firebase-config.js"></script>
 
