@@ -324,8 +324,10 @@ document.addEventListener('DOMContentLoaded', () => {
         ul.innerHTML = links.map((l, i) => `
             <li class="sortable-item" draggable="true" data-index="${i}">
                 <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
-                <span class="item-label">${esc(l.label)}</span>
-                <span class="item-sub" title="${esc(l.href)}">${esc(l.href)}</span>
+                <div class="item-text">
+                    <span class="item-label">${esc(l.label)}</span>
+                    <span class="item-sub" title="${esc(l.href)}">${esc(l.href)}</span>
+                </div>
                 <div class="item-actions">
                     <button class="btn-icon-edit nav-edit-btn" data-idx="${i}" title="Düzenle"><i class="fas fa-pencil-alt"></i></button>
                     <button class="btn-icon-danger nav-delete-btn" data-idx="${i}" title="Sil"><i class="fas fa-trash"></i></button>

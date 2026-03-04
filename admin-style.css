@@ -1154,11 +1154,21 @@ body.admin-body {
     flex-shrink: 0;
 }
 
+/* Nav link rows: text wrapper takes all space, actions stay right */
+.item-text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    overflow: hidden;
+}
+
 .item-label {
     font-size: 14px;
     font-weight: 500;
-    flex: 0 0 auto;
-    max-width: 160px;
+    flex-shrink: 0;
+    max-width: 130px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1177,7 +1187,6 @@ body.admin-body {
 .item-actions {
     display: flex;
     gap: 6px;
-    margin-left: auto;
     flex-shrink: 0;
 }
 
@@ -1189,22 +1198,30 @@ body.admin-body {
     color: var(--accent);
     border-radius: 20px;
     white-space: nowrap;
+    flex-shrink: 0;
 }
 
+/* Menu rows use item-info instead of item-text */
 .menu-item-row .item-info {
     flex: 1;
     min-width: 0;
 }
 
-/* Inside item-info wrapper, label can be full width */
 .item-info .item-label {
     max-width: 100%;
-    flex: none;
+    flex-shrink: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
 }
 
 .item-info .item-sub {
     flex: none;
-    white-space: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
 }
 
 .menu-thumb {
