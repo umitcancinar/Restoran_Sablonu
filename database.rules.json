@@ -4,13 +4,15 @@
       "reservations": {
         ".read": "auth != null",
         "$resId": {
-          ".write": "!data.exists() || auth != null"
+          ".write": "!data.exists() || auth != null",
+          ".validate": "auth != null || (newData.hasChildren(['name','phone','timestamp']) && newData.child('name').isString() && newData.child('name').val().length > 0 && newData.child('name').val().length < 200 && newData.child('timestamp').isNumber())"
         }
       },
       "orders": {
         ".read": "auth != null",
         "$orderId": {
-          ".write": "!data.exists() || auth != null"
+          ".write": "!data.exists() || auth != null",
+          ".validate": "auth != null || (newData.hasChildren(['customerName','customerPhone','totalPrice','timestamp']) && newData.child('customerName').isString() && newData.child('customerName').val().length > 0 && newData.child('totalPrice').isNumber() && newData.child('totalPrice').val() > 0)"
         }
       },
       "settings": {

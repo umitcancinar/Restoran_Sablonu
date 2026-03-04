@@ -22,6 +22,29 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     // ==========================================
+    // HELPERS - GÜVENLİ HTML
+    // ==========================================
+    // Düz metin için tam escape
+    function esc(str) {
+        if (str == null) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    // Zengin metin (bold/italic/br izin ver ama script/event handler engelle)
+    function safeHtml(str) {
+        if (str == null) return '';
+        return String(str)
+            .replace(/<script[\s\S]*?<\/script>/gi, '')
+            .replace(/on\w+\s*=/gi, '')
+            .replace(/javascript:/gi, '');
+    }
+
+    // ==========================================
     // 0. KAPSAMLI CMS YUKLEYICI
     // ==========================================
     const loadSiteSettings = () => {
@@ -32,15 +55,15 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- HERO ---
             if (settings.heroSub && settings.heroSub.trim()) {
                 const el = document.getElementById('dyn-hero-sub');
-                if (el) el.innerHTML = settings.heroSub;
+                if (el) el.innerHTML = safeHtml(settings.heroSub);
             }
             if (settings.heroTitle && settings.heroTitle.trim()) {
                 const el = document.getElementById('dyn-hero-title');
-                if (el) el.innerHTML = settings.heroTitle;
+                if (el) el.innerHTML = safeHtml(settings.heroTitle);
             }
             if (settings.heroDesc && settings.heroDesc.trim()) {
                 const el = document.getElementById('dyn-hero-desc');
-                if (el) el.innerHTML = settings.heroDesc;
+                if (el) el.innerHTML = safeHtml(settings.heroDesc);
             }
             if (settings.heroBtnPrimary && settings.heroBtnPrimary.trim()) {
                 const el = document.querySelector('.hero-buttons .btn-primary');
@@ -52,17 +75,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (settings.heroBg && settings.heroBg.trim()) {
                 const el = document.querySelector('.hero-bg');
-                if (el) el.style.backgroundImage = `url('${settings.heroBg}')`;
+                // Only allow http/https URLs for background image
+                const bgUrl = settings.heroBg.trim();
+                if (/^https?:\/\//.test(bgUrl) || bgUrl.startsWith('/')) {
+                    if (el) el.style.backgroundImage = `url('${bgUrl}')`;
+                }
             }
 
             // --- HAKKIMIZDA ---
             if (settings.aboutTitle && settings.aboutTitle.trim()) {
                 const el = document.getElementById('dyn-about-title');
-                if (el) el.innerHTML = settings.aboutTitle;
+                if (el) el.innerHTML = safeHtml(settings.aboutTitle);
             }
             if (settings.aboutDesc && settings.aboutDesc.trim()) {
                 const el = document.getElementById('dyn-about-desc');
-                if (el) el.innerHTML = settings.aboutDesc;
+                if (el) el.innerHTML = safeHtml(settings.aboutDesc);
             }
             if (settings.aboutImg && settings.aboutImg.trim()) {
                 const el = document.getElementById('dyn-about-img');
@@ -92,11 +119,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- KAMPANYA ---
             if (settings.promoTitle && settings.promoTitle.trim()) {
                 const el = document.getElementById('dyn-promo-title');
-                if (el) el.innerHTML = settings.promoTitle;
+                if (el) el.innerHTML = safeHtml(settings.promoTitle);
             }
             if (settings.promoDesc && settings.promoDesc.trim()) {
                 const el = document.querySelector('.promo-content p');
-                if (el) el.innerHTML = settings.promoDesc;
+                if (el) el.innerHTML = safeHtml(settings.promoDesc);
             }
             if (settings.promoBtn && settings.promoBtn.trim()) {
                 const el = document.querySelector('.promo-content .btn-primary');
@@ -106,22 +133,25 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- ILETISIM / REZERVASYON ---
             if (settings.contactAddr && settings.contactAddr.trim()) {
                 const items = document.querySelectorAll('.res-contact-list li');
-                if (items[0]) items[0].innerHTML = `<i class="fas fa-map-marker-alt"></i> ${settings.contactAddr}`;
+                if (items[0]) items[0].innerHTML = `<i class="fas fa-map-marker-alt"></i> ${esc(settings.contactAddr)}`;
             }
             if (settings.contactPhone && settings.contactPhone.trim()) {
                 const items = document.querySelectorAll('.res-contact-list li');
-                if (items[1]) items[1].innerHTML = `<i class="fas fa-phone-alt"></i> ${settings.contactPhone}`;
+                if (items[1]) items[1].innerHTML = `<i class="fas fa-phone-alt"></i> ${esc(settings.contactPhone)}`;
                 // WhatsApp numarasi guncelle
                 const wa = document.querySelector('.whatsapp-float');
-                if (wa) wa.href = `https://wa.me/${settings.contactPhone.replace(/\D/g, '')}?text=Merhaba,%20web%20sitenizden%20yaziyorum.%20Bilgi%20almak%20istiyorum.`;
+                const cleanPhone = settings.contactPhone.replace(/\D/g, '');
+                if (wa && /^\d+$/.test(cleanPhone)) {
+                    wa.href = `https://wa.me/${cleanPhone}?text=Merhaba,%20web%20sitenizden%20yaziyorum.%20Bilgi%20almak%20istiyorum.`;
+                }
             }
             if (settings.contactEmail && settings.contactEmail.trim()) {
                 const items = document.querySelectorAll('.res-contact-list li');
-                if (items[2]) items[2].innerHTML = `<i class="fas fa-envelope"></i> ${settings.contactEmail}`;
+                if (items[2]) items[2].innerHTML = `<i class="fas fa-envelope"></i> ${esc(settings.contactEmail)}`;
             }
             if (settings.contactHours && settings.contactHours.trim()) {
                 const items = document.querySelectorAll('.res-contact-list li');
-                if (items[3]) items[3].innerHTML = `<i class="fas fa-clock"></i> ${settings.contactHours}`;
+                if (items[3]) items[3].innerHTML = `<i class="fas fa-clock"></i> ${esc(settings.contactHours)}`;
             }
 
             // --- FOOTER ---
@@ -131,12 +161,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (settings.logoText && settings.logoText.trim()) {
                 document.querySelectorAll('.logo, .footer-logo').forEach(el => {
-                    el.innerHTML = `<i class="fas fa-crown"></i> ${settings.logoText}<span>.</span>`;
+                    el.innerHTML = `<i class="fas fa-crown"></i> ${esc(settings.logoText)}<span>.</span>`;
                 });
             }
             if (settings.copyright && settings.copyright.trim()) {
                 const el = document.querySelector('.footer-bottom p');
-                if (el) el.innerHTML = settings.copyright;
+                if (el) el.innerHTML = safeHtml(settings.copyright);
             }
 
             // --- SOSYAL MEDYA ---
@@ -160,12 +190,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const mobileNavUl = document.querySelector('.mobile-nav-links');
                 if (navUl) {
                     navUl.innerHTML = navbarLinks.map((l, i) =>
-                        `<li><a href="${l.href}" class="nav-link${i === 0 ? ' active' : ''}">${l.label}</a></li>`
+                        `<li><a href="${esc(l.href)}" class="nav-link${i === 0 ? ' active' : ''}">${esc(l.label)}</a></li>`
                     ).join('');
                 }
                 if (mobileNavUl) {
                     mobileNavUl.innerHTML = navbarLinks.map(l =>
-                        `<li><a href="${l.href}">${l.label}</a></li>`
+                        `<li><a href="${esc(l.href)}">${esc(l.label)}</a></li>`
                     ).join('');
                 }
             }
