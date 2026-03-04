@@ -324,15 +324,23 @@ document.addEventListener('DOMContentLoaded', () => {
         ul.innerHTML = links.map((l, i) => `
             <li class="sortable-item" draggable="true" data-index="${i}">
                 <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
-                <span class="item-label">${l.label}</span>
-                <span class="item-sub">${l.href}</span>
+                <span class="item-label">${esc(l.label)}</span>
+                <span class="item-sub" title="${esc(l.href)}">${esc(l.href)}</span>
                 <div class="item-actions">
-                    <button class="btn-icon-edit" onclick="editNavLink(${i})" title="Düzenle"><i class="fas fa-pencil-alt"></i></button>
-                    <button class="btn-icon-danger" onclick="deleteNavLink(${i})" title="Sil"><i class="fas fa-trash"></i></button>
+                    <button class="btn-icon-edit nav-edit-btn" data-idx="${i}" title="Düzenle"><i class="fas fa-pencil-alt"></i></button>
+                    <button class="btn-icon-danger nav-delete-btn" data-idx="${i}" title="Sil"><i class="fas fa-trash"></i></button>
                 </div>
             </li>
         `).join('');
         initDragSort(ul, 'navlinks', defaultNavLinks);
+
+        // Event delegation: attach once on the list container
+        ul.onclick = (e) => {
+            const editBtn = e.target.closest('.nav-edit-btn');
+            const delBtn = e.target.closest('.nav-delete-btn');
+            if (editBtn) editNavLink(parseInt(editBtn.dataset.idx));
+            if (delBtn) deleteNavLink(parseInt(delBtn.dataset.idx));
+        };
     }
 
     document.getElementById('add-nav-btn').addEventListener('click', () => {
@@ -347,25 +355,35 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('Menüye eklendi!');
     });
 
-    window.deleteNavLink = async (i) => {
-        const ok = await showConfirm('Linki Sil', 'Bu menü linkini silmek istediğinize emin misiniz?');
-        if (!ok) return;
-        const links = [...appState.nav];
-        links.splice(i, 1);
-        db.ref('cms/navlinks').set(links);
-        showToast('Link silindi!');
-    };
+    // Save button for nav (manual save not strictly needed since add/delete auto-saves, but kept for UX)
+    const saveNavBtn = document.getElementById('save-nav-btn');
+    if (saveNavBtn) {
+        saveNavBtn.addEventListener('click', () => {
+            db.ref('cms/navlinks').set(appState.nav);
+            showToast('Navigasyon kaydedildi!');
+        });
+    }
 
-    window.editNavLink = (i) => {
+    function deleteNavLink(i) {
+        showConfirm('Linki Sil', 'Bu menü linkini silmek istediğinize emin misiniz?').then(ok => {
+            if (!ok) return;
+            const links = [...appState.nav];
+            links.splice(i, 1);
+            db.ref('cms/navlinks').set(links);
+            showToast('Link silindi!');
+        });
+    }
+
+    function editNavLink(i) {
         const l = appState.nav[i];
         showEditModal('Linki Düzenle', `
             <div class="form-field">
                 <label>Başlık</label>
-                <input type="text" id="em-nav-label" class="field-input" value="${l.label}">
+                <input type="text" id="em-nav-label" class="field-input">
             </div>
             <div class="form-field">
                 <label>Bağlantı</label>
-                <input type="text" id="em-nav-href" class="field-input" value="${l.href}">
+                <input type="text" id="em-nav-href" class="field-input">
             </div>
         `, () => {
             const links = [...appState.nav];
@@ -374,7 +392,14 @@ document.addEventListener('DOMContentLoaded', () => {
             db.ref('cms/navlinks').set(links);
             showToast('Link güncellendi!');
         });
-    };
+        // Set values safely via JS (not via HTML attribute) to avoid XSS / encoding issues
+        setTimeout(() => {
+            const labelInput = document.getElementById('em-nav-label');
+            const hrefInput = document.getElementById('em-nav-href');
+            if (labelInput) labelInput.value = l.label;
+            if (hrefInput) hrefInput.value = l.href;
+        }, 0);
+    }
 
     // ========================================
     // 9. HERO
