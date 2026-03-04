@@ -10,6 +10,8 @@
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Poppins:wght@300;400;500;600;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path fill='%23C9A84C' d='M256 0c-17.7 0-32 14.3-32 32V66.8l-72.4-72.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L169.4 103 104 37.5c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l83.9 83.9L37.5 104c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l72.4 72.4H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h448c17.7 0 32-14.3 32-32s-14.3-32-32-32h-32.8l72.4-72.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L408 166.6l83.9-83.9c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L342.6 103 286.6 47.1 288 32c0-17.7-14.3-32-32-32zM32 352v64c0 53 43 96 96 96h256c53 0 96-43 96-96v-64H32z'/></svg>" />
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -166,7 +168,8 @@
                         </div>
                         <p class="menu-desc">Közlenmiş kuşkonmaz, trüf mantarlı patates püresi ve özel demi-glace sos
                             ile.</p>
-                        <button class="btn-add-cart"><i class="fas fa-plus"></i> Sipariş Ekle</button>
+                        <button class="btn-add-cart" onclick="addToCart('Izgara Dana Antrikot', 450)"><i
+                                class="fas fa-plus"></i> Sipariş Ekle</button>
                     </div>
                 </div>
 
@@ -182,7 +185,8 @@
                             <span class="price">₺180</span>
                         </div>
                         <p class="menu-desc">Mascarpone peyniri, espresso ile ıslatılmış kedi dili ve kakao tozu.</p>
-                        <button class="btn-add-cart"><i class="fas fa-plus"></i> Sipariş Ekle</button>
+                        <button class="btn-add-cart" onclick="addToCart('Orijinal İtalyan Tiramisu', 180)"><i
+                                class="fas fa-plus"></i> Sipariş Ekle</button>
                     </div>
                 </div>
 
@@ -197,13 +201,16 @@
                             <span class="price">₺250</span>
                         </div>
                         <p class="menu-desc">Cin, mürver çiçeği likörü, taze lime suyu ve salatalık özütü.</p>
-                        <button class="btn-add-cart"><i class="fas fa-plus"></i> Sipariş Ekle</button>
+                        <button class="btn-add-cart" onclick="addToCart('RY Signature Cocktail', 250)"><i
+                                class="fas fa-plus"></i> Sipariş Ekle</button>
                     </div>
                 </div>
             </div>
 
             <div class="text-center mt-5 fade-in-up">
-                <a href="#" class="btn btn-outline">Tüm Menüyü İndir (PDF)</a>
+                <a href="javascript:void(0)"
+                    onclick="alert('Menü listesi (PDF) şu an güncelleniyor. Lütfen daha sonra tekrar deneyiniz.')"
+                    class="btn btn-outline">Tüm Menüyü İndir (PDF)</a>
             </div>
         </div>
     </section>
@@ -332,6 +339,28 @@
     </a>
 
     <button id="scrollTop" class="scroll-top-btn"><i class="fas fa-arrow-up"></i></button>
+
+    <!-- SEPET SİSTEMİ (SIDEBAR + BUTON) -->
+    <div id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h3>Sepetiniz</h3>
+            <button id="close-cart" aria-label="Sepeti Kapat"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p style="text-align:center;color:var(--text-muted)">Sepetiniz boş.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">Toplam: <span id="cart-total-price">₺0</span></div>
+            <button class="btn btn-primary btn-block"
+                onclick="alert('Sipariş sistemi şu an test aşamasındadır. Ödeme altyapısı yakında eklenecektir!')">Siparişi
+                Tamamla</button>
+        </div>
+    </div>
+
+    <button id="cart-fab" class="cart-fab" aria-label="Sepetim">
+        <i class="fas fa-shopping-cart"></i>
+        <span id="cart-count" class="cart-count">0</span>
+    </button>
 
     <footer class="footer">
         <div class="container">

@@ -214,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                 <span class="price">&#8378;${item.price}</span>
                             </div>
                             <p class="menu-desc">${item.desc}</p>
-                            <button class="btn-add-cart"><i class="fas fa-plus"></i> Siparis Ekle</button>
+                            <button class="btn-add-cart" onclick="addToCart('${item.name.replace(/'/g, "\\'").replace(/"/g, "&quot;")}', '${item.price}')"><i class="fas fa-plus"></i> Siparis Ekle</button>
                         </div>
                     </div>`;
                     });
@@ -387,15 +387,24 @@ document.addEventListener('DOMContentLoaded', () => {
             };
 
             setTimeout(() => {
-                db.ref('cms/reservations').push(newRes);
-
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                formMessage.innerText = "Rezervasyonunuz alindi! Yoneticimiz onaylayacaktir.";
-                formMessage.className = "form-message success";
-                formMessage.style.display = 'block';
-                resForm.reset();
-                setTimeout(() => { formMessage.style.display = 'none'; }, 5000);
+                db.ref('cms/reservations').push(newRes)
+                    .then(() => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                        formMessage.innerText = "Rezervasyonunuz alındı! Yöneticimiz onaylayacaktır.";
+                        formMessage.className = "form-message success";
+                        formMessage.style.display = 'block';
+                        resForm.reset();
+                        setTimeout(() => { formMessage.style.display = 'none'; }, 5000);
+                    })
+                    .catch(err => {
+                        btn.innerHTML = originalText;
+                        btn.disabled = false;
+                        formMessage.innerText = "Hata: Firebase bağlantısı sağlanamadı. Lütfen veritabanı kurallarını (Rules) kontrol edin.";
+                        formMessage.className = "form-message error";
+                        formMessage.style.display = 'block';
+                        console.error("Firebase yazma hatası:", err);
+                    });
             }, 1500);
         });
     }
