@@ -25,6 +25,7 @@ const firebaseConfig = {
 // Initialize Firebase via compat libraries
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+window.db = db; // Make accessible globally
 
 // Encoded Admin Credentials
 window.DB_ADMIN_U = atob("Y2luYXJ4MDRAZ21haWwuY29t");

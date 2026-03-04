@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     function initDashboard() {
-        if (!window.db) return; // Ensure Firebase is initialized
+        if (typeof db === 'undefined') return; // Ensure Firebase is initialized
 
         db.ref('cms/settings').on('value', snap => {
             appState.settings = snap.val() || {};

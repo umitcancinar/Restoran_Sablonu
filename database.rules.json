@@ -3,11 +3,15 @@
     "cms": {
       "reservations": {
         ".read": "auth != null",
-        ".write": "auth != null || !data.exists()"
+        "$resId": {
+          ".write": "!data.exists() || auth != null"
+        }
       },
       "orders": {
         ".read": "auth != null",
-        ".write": "auth != null || !data.exists()"
+        "$orderId": {
+          ".write": "!data.exists() || auth != null"
+        }
       },
       "settings": {
         ".read": true,
