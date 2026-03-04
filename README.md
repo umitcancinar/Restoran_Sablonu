@@ -1,0 +1,1 @@
+Bu proje, bir restoranın ihtiyaç duyabileceği tüm dijital süreçleri tek bir çatı altında toplar. Müşteriler için pürüzsüz ve animasyonlarla zenginleştirilmiş bir önyüz sunarken; işletme sahipleri için menü güncellemelerinden, rezervasyon takibine ve anlık sipariş yönetimine kadar her şeyi kod yazmadan kontrol edebilecekleri güvenli bir Admin Paneli sağlar.
