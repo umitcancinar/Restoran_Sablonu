@@ -712,10 +712,41 @@ document.addEventListener('DOMContentLoaded', () => {
         showToast('Genel ayarlar kaydedildi!');
     });
 
-    document.getElementById('change-pass-btn').addEventListener('click', () => {
-        // Since we are moving to hardcoded obfuscated pass, changing it locally won't persist on refresh correctly unless we save somewhere.
-        // But for this simulation, we can just save it into settings or session so it works temporarily.
-        showToast('Uyarı: Firebase yapısında şifre firebase-config.js içinden manuel değiştirilmelidir.', 'error');
+    document.getElementById('change-pass-btn').addEventListener('click', async () => {
+        const currentPass = document.getElementById('current-pass').value;
+        const newPass = document.getElementById('new-pass').value;
+        const newPassConfirm = document.getElementById('new-pass-confirm').value;
+
+        if (!currentPass || !newPass || !newPassConfirm) {
+            showToast('Tüm alanları doldurun!', 'error'); return;
+        }
+        if (newPass.length < 8) {
+            showToast('Yeni şifre en az 8 karakter olmalı!', 'error'); return;
+        }
+        if (newPass !== newPassConfirm) {
+            showToast('Yeni şifreler eşleşmiyor!', 'error'); return;
+        }
+
+        const user = firebase.auth().currentUser;
+        if (!user) { showToast('Oturum bulunamadı!', 'error'); return; }
+
+        try {
+            // Mevcut şifreyle yeniden kimlik doğrula
+            const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPass);
+            await user.reauthenticateWithCredential(credential);
+            // Şifreyi güncelle
+            await user.updatePassword(newPass);
+            showToast('Şifre başarıyla değiştirildi!');
+            document.getElementById('current-pass').value = '';
+            document.getElementById('new-pass').value = '';
+            document.getElementById('new-pass-confirm').value = '';
+        } catch (err) {
+            if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+                showToast('Mevcut şifre hatalı!', 'error');
+            } else {
+                showToast('Hata: ' + (err.message || err), 'error');
+            }
+        }
     });
 
     // ========================================
