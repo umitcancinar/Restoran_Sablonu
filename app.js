@@ -483,8 +483,21 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    window.addToCart = (event, name, price) => {
-        // Robust price parse: strip all non-numeric characters except dot
+    window.addToCart = (eventOrName, nameOrPrice, priceArg) => {
+        // Eski statik HTML: addToCart('Ürün Adı', 450)  → ilk arg string
+        // Yeni dinamik HTML: addToCart(event, 'Ürün Adı', '450') → ilk arg Event
+        let event, name, price;
+        if (typeof eventOrName === 'string') {
+            // Statik HTML çağrısı - event yok
+            event = null;
+            name = eventOrName;
+            price = nameOrPrice;
+        } else {
+            // Dinamik (Firebase) çağrısı - event var
+            event = eventOrName;
+            name = nameOrPrice;
+            price = priceArg;
+        }
         const numPrice = parseFloat(String(price).replace(/[^0-9.]/g, '')) || 0;
         const existing = cart.find(i => i.name === name);
         if (existing) {
