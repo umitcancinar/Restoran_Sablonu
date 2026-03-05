@@ -264,13 +264,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // --- STORIES ---
-        db.ref('cms/stories').on('value', (snapshot) => {
-            const storyData = snapshot.val();
+        db.ref('cms/stories').on('value', snap => {
+            const raw = snap.val();
+            const storyData = raw ? Object.values(raw) : [];
             const container = document.getElementById('stories-container');
             const bar = document.getElementById('stories-bar');
             if (!container || !bar) return;
 
-            if (!storyData || !Array.isArray(storyData) || storyData.length === 0) {
+            if (!storyData || storyData.length === 0) {
                 bar.style.display = 'none';
                 return;
             }
@@ -293,7 +294,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- TABLE MAP (for reservation) ---
         db.ref('cms/tablemap').on('value', (snap) => {
-            tablemapData = snap.val() || getDefaultTablemap();
+            const val = snap.val();
+            tablemapData = val ? Object.values(val) : getDefaultTablemap();
             // Also get approved reservations to mark reserved tables
             renderTablemap(tablemapData, currentResDateTime);
         });

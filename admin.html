@@ -744,14 +744,16 @@
                                 </div>
                             </div>
                             <div class="form-field">
-                                <label>Zone / Alan</label>
-                                <select id="tm-zone" class="field-input">
-                                    <option value="Teras">Teras</option>
-                                    <option value="Cam Kenarı">Cam Kenarı</option>
-                                    <option value="Şömine">Şömine</option>
-                                    <option value="İç Alan">İç Alan</option>
-                                    <option value="VIP">VIP</option>
-                                </select>
+                                <label>Zone / Alan (Yeni yazabilir veya seçebilirsiniz)</label>
+                                <input type="text" id="tm-zone" class="field-input" list="zone-list"
+                                    placeholder="Örn: Bahçe" value="İç Alan">
+                                <datalist id="zone-list">
+                                    <option value="Teras">
+                                    <option value="Cam Kenarı">
+                                    <option value="Şömine">
+                                    <option value="İç Alan">
+                                    <option value="VIP">
+                                </datalist>
                             </div>
                             <button class="btn-primary" id="add-table-btn">
                                 <i class="fas fa-plus"></i> Masa Ekle

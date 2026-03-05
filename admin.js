@@ -837,7 +837,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadStoriesList() {
         const ul = document.getElementById('stories-admin-list');
         if (!ul) return;
-        const stories = Array.isArray(appState.stories) ? appState.stories : [];
+        const stories = Object.values(appState.stories || {});
         if (stories.length === 0) {
             ul.innerHTML = '<li class="empty-state">Henüz story yok. Eklemek için formu kullanın.</li>';
             return;
@@ -862,7 +862,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const mediaUrl = document.getElementById('story-media-url')?.value.trim();
             const type = document.getElementById('story-media-type')?.value || 'image';
             if (!title || !mediaUrl) { showToast('Başlık ve medya URL zorunlu!', 'error'); return; }
-            const stories = Array.isArray(appState.stories) ? [...appState.stories] : [];
+            const stories = Object.values(appState.stories || {});
             stories.push({ title, mediaUrl, type, createdAt: Date.now() });
             db.ref('cms/stories').set(stories)
                 .then(() => {
@@ -876,7 +876,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.deleteStory = async (i) => {
         const ok = await showConfirm('Story Sil', 'Bu story\'yi silmek istiyor musunuz?');
         if (!ok) return;
-        const stories = Array.isArray(appState.stories) ? [...appState.stories] : [];
+        const stories = Object.values(appState.stories || {});
         stories.splice(i, 1);
         db.ref('cms/stories').set(stories);
         showToast('Story silindi!');
@@ -905,7 +905,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadTablemapList() {
         const ul = document.getElementById('tablemap-admin-list');
         if (!ul) return;
-        const tables = Array.isArray(appState.tablemap) ? appState.tablemap : [];
+        const tables = Object.values(appState.tablemap || {});
         if (tables.length === 0) {
             ul.innerHTML = '<li class="empty-state">Masa haritası boş. Varsayılanları yüklemek için sıfırla butonunu kullanın.</li>';
             return;
@@ -934,7 +934,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const capacity = parseInt(document.getElementById('tm-cap')?.value) || 2;
             const zone = document.getElementById('tm-zone')?.value || 'İç Alan';
             if (!label) { showToast('Masa etiketi zorunlu!', 'error'); return; }
-            const tables = Array.isArray(appState.tablemap) ? [...appState.tablemap] : [];
+            const tables = Object.values(appState.tablemap || {});
             const id = 't' + Date.now();
             tables.push({ id, zone, label, capacity });
             db.ref('cms/tablemap').set(tables)
@@ -949,7 +949,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.deleteTable = async (i) => {
         const ok = await showConfirm('Masayı Sil', 'Bu masayı haritadan silmek istiyor musunuz?');
         if (!ok) return;
-        const tables = Array.isArray(appState.tablemap) ? [...appState.tablemap] : [];
+        const tables = Object.values(appState.tablemap || {});
         tables.splice(i, 1);
         db.ref('cms/tablemap').set(tables);
         showToast('Masa silindi!');

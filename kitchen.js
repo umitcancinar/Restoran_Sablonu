@@ -25,6 +25,24 @@ document.addEventListener('DOMContentLoaded', () => {
     updateClock();
 
     // =============================================
+    // THEME TOGGLE
+    // =============================================
+    const themeBtn = document.getElementById('kitchen-theme-toggle');
+    if (themeBtn) {
+        const savedTheme = localStorage.getItem('kitchen-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeBtn.innerHTML = savedTheme === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+
+        themeBtn.addEventListener('click', () => {
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', next);
+            localStorage.setItem('kitchen-theme', next);
+            themeBtn.innerHTML = next === 'light' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+        });
+    }
+
+    // =============================================
     // AUTH — sessionStorage for persistence
     // =============================================
     function showDashboard() {
