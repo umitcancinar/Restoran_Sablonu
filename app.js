@@ -293,7 +293,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- TABLE MAP (for reservation) ---
         db.ref('cms/tablemap').on('value', (snap) => {
-            tablemapData = snap.val() || getDefaultTablemap();
+            const arr = snap.val();
+            tablemapData = (Array.isArray(arr) && arr.length > 0) ? arr : getDefaultTablemap();
             // Also get approved reservations to mark reserved tables
             renderTablemap(tablemapData, currentResDateTime);
         });
