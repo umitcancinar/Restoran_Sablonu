@@ -46,9 +46,6 @@
                 <button id="theme-toggle" class="theme-btn" aria-label="Tema Değiştir">
                     <i class="fas fa-moon"></i>
                 </button>
-                <a href="admin.html" class="admin-link" aria-label="Yönetici Paneli" target="_blank">
-                    <i class="fas fa-user-shield"></i>
-                </a>
                 <button class="mobile-menu-btn" id="mobile-menu-btn">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -65,6 +62,35 @@
             <li><a href="#gallery">Galeri</a></li>
             <li><a href="#reservation">Rezervasyon</a></li>
         </ul>
+    </div>
+
+    <!-- ==================== STORIES BAR ==================== -->
+    <div class="stories-bar" id="stories-bar">
+        <div class="stories-container" id="stories-container">
+            <!-- Dinamik olarak yüklenir -->
+        </div>
+    </div>
+
+    <!-- STORY MODAL -->
+    <div class="story-modal-overlay" id="story-modal-overlay">
+        <div class="story-modal">
+            <div class="story-progress-bar">
+                <div class="story-progress-fill" id="story-progress-fill"></div>
+            </div>
+            <div class="story-header">
+                <div class="story-avatar-sm" id="story-modal-avatar"></div>
+                <div class="story-info">
+                    <strong id="story-modal-title"></strong>
+                    <span id="story-modal-time"></span>
+                </div>
+                <button class="story-close-btn" id="story-close-btn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="story-media" id="story-media">
+                <!-- image or video -->
+            </div>
+            <button class="story-nav-btn story-prev" id="story-prev"><i class="fas fa-chevron-left"></i></button>
+            <button class="story-nav-btn story-next" id="story-next"><i class="fas fa-chevron-right"></i></button>
+        </div>
     </div>
 
     <section id="hero" class="hero-section">
@@ -107,7 +133,7 @@
                     <div class="features-list">
                         <div class="feature-item">
                             <i class="fas fa-leaf"></i>
-                            <span>%100 Organik & Taze Ürünler</span>
+                            <span>%100 Organik &amp; Taze Ürünler</span>
                         </div>
                         <div class="feature-item">
                             <i class="fas fa-award"></i>
@@ -262,6 +288,7 @@
         </div>
     </section>
 
+    <!-- ==================== RESERVATION ==================== -->
     <section id="reservation" class="reservation-section section-padding bg-alt">
         <div class="container">
             <div class="reservation-wrapper box-shadow-lg">
@@ -276,57 +303,99 @@
                     </ul>
                 </div>
                 <div class="res-form-container">
-                    <div class="section-heading">
-                        <h2>Masa Ayırtın</h2>
+                    <!-- STEP 1: Form -->
+                    <div id="res-step-form">
+                        <div class="section-heading">
+                            <h2>Masa Ayırtın</h2>
+                        </div>
+                        <form id="reservation-form" class="reservation-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="res-name">Adınız Soyadınız</label>
+                                    <input type="text" id="res-name" class="form-control"
+                                        placeholder="Örn: Ümitcan Çınar" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="res-phone">Telefon Numaranız</label>
+                                    <input type="tel" id="res-phone" class="form-control" placeholder="05XX XXX XX XX"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="res-date">Tarih</label>
+                                    <input type="date" id="res-date" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="res-time">Saat (1 saat slot)</label>
+                                    <select id="res-time" class="form-control" required>
+                                        <option value="">Seçiniz</option>
+                                        <option value="10:00">10:00</option>
+                                        <option value="11:00">11:00</option>
+                                        <option value="12:00">12:00</option>
+                                        <option value="13:00">13:00</option>
+                                        <option value="14:00">14:00</option>
+                                        <option value="15:00">15:00</option>
+                                        <option value="16:00">16:00</option>
+                                        <option value="17:00">17:00</option>
+                                        <option value="18:00">18:00</option>
+                                        <option value="19:00">19:00</option>
+                                        <option value="20:00">20:00</option>
+                                        <option value="21:00">21:00</option>
+                                        <option value="22:00">22:00</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="res-guests">Kişi Sayısı</label>
+                                    <select id="res-guests" class="form-control" required>
+                                        <option value="1">1 Kişi</option>
+                                        <option value="2">2 Kişi</option>
+                                        <option value="3">3 Kişi</option>
+                                        <option value="4">4 Kişi</option>
+                                        <option value="5+">5+ Kişi</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group w-100">
+                                <label for="res-note">Özel İstekleriniz (Opsiyonel)</label>
+                                <textarea id="res-note" class="form-control" rows="3"
+                                    placeholder="Alerji durumu, kutlama vb."></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block mt-3">
+                                <i class="fas fa-chair"></i> Masa Seçimine Geç
+                            </button>
+                            <div id="form-message" class="form-message"></div>
+                        </form>
                     </div>
-                    <form id="reservation-form" class="reservation-form">
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="res-name">Adınız Soyadınız</label>
-                                <input type="text" id="res-name" class="form-control" placeholder="Örn: Ümitcan Çınar"
-                                    required>
-                            </div>
-                            <div class="form-group">
-                                <label for="res-phone">Telefon Numaranız</label>
-                                <input type="tel" id="res-phone" class="form-control" placeholder="05XX XXX XX XX"
-                                    required>
-                            </div>
+
+                    <!-- STEP 2: Table Map -->
+                    <div id="res-step-tablemap" class="hidden">
+                        <div class="section-heading">
+                            <h2>Masa Seçin</h2>
+                            <p class="res-step-desc">Rezervasyonunuz için tercih ettiğiniz masayı seçin.</p>
                         </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label for="res-date">Tarih</label>
-                                <input type="date" id="res-date" class="form-control" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="res-time">Saat</label>
-                                <select id="res-time" class="form-control" required>
-                                    <option value="">Seçiniz</option>
-                                    <option value="18:00">18:00</option>
-                                    <option value="19:00">19:00</option>
-                                    <option value="20:00">20:00</option>
-                                    <option value="21:00">21:00</option>
-                                    <option value="22:00">22:00</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for="res-guests">Kişi Sayısı</label>
-                                <select id="res-guests" class="form-control" required>
-                                    <option value="1">1 Kişi</option>
-                                    <option value="2">2 Kişi</option>
-                                    <option value="3">3 Kişi</option>
-                                    <option value="4">4 Kişi</option>
-                                    <option value="5+">5+ Kişi</option>
-                                </select>
-                            </div>
+                        <div class="tablemap-legend">
+                            <span class="legend-item"><span class="legend-dot available"></span> Müsait</span>
+                            <span class="legend-item"><span class="legend-dot reserved"></span> Dolu</span>
+                            <span class="legend-item"><span class="legend-dot selected"></span> Seçiliniz</span>
                         </div>
-                        <div class="form-group w-100">
-                            <label for="res-note">Özel İstekleriniz (Opsiyonel)</label>
-                            <textarea id="res-note" class="form-control" rows="3"
-                                placeholder="Alerji durumu, kutlama vb."></textarea>
+                        <div id="tablemap-grid" class="tablemap-grid">
+                            <!-- Dinamik yüklenir -->
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block mt-3">Rezervasyon Talebi Gönder</button>
-                        <div id="form-message" class="form-message"></div>
-                    </form>
+                        <div class="tablemap-selected-info" id="tablemap-selected-info" style="display:none">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="tablemap-selected-label">Masa seçildi</span>
+                        </div>
+                        <div class="form-row mt-3" style="gap:12px">
+                            <button class="btn btn-outline" id="res-back-btn" style="flex:1">
+                                <i class="fas fa-arrow-left"></i> Geri
+                            </button>
+                            <button class="btn btn-primary" id="res-confirm-btn" style="flex:2" disabled>
+                                <i class="fas fa-paper-plane"></i> Rezervasyonu Gönder
+                            </button>
+                        </div>
+                        <div id="form-message-2" class="form-message" style="margin-top:12px"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -340,7 +409,7 @@
 
     <button id="scrollTop" class="scroll-top-btn"><i class="fas fa-arrow-up"></i></button>
 
-    <!-- SEPET SİSTEMİ (SIDEBAR + BUTON) -->
+    <!-- ==================== CART SIDEBAR ==================== -->
     <div id="cart-sidebar" class="cart-sidebar">
         <div class="cart-header">
             <h3>Sepetiniz</h3>
@@ -349,11 +418,45 @@
         <div class="cart-items" id="cart-items">
             <p style="text-align:center;color:var(--text-muted)">Sepetiniz boş.</p>
         </div>
+
+        <!-- ORDER STATUS PANEL (shows after order placed) -->
+        <div id="order-status-panel" class="order-status-panel" style="display:none">
+            <div class="order-status-header">
+                <i class="fas fa-receipt"></i>
+                <span>Sipariş Durumu</span>
+            </div>
+            <div class="order-status-steps">
+                <div class="status-step" id="sstep-received">
+                    <div class="status-step-dot"></div>
+                    <div class="status-step-text">
+                        <strong>Sipariş Alındı</strong>
+                        <span>Restorana iletildi</span>
+                    </div>
+                </div>
+                <div class="status-step" id="sstep-preparing">
+                    <div class="status-step-dot"></div>
+                    <div class="status-step-text">
+                        <strong>Hazırlanıyor</strong>
+                        <span>Mutfakta işlemde</span>
+                    </div>
+                </div>
+                <div class="status-step" id="sstep-serving">
+                    <div class="status-step-dot"></div>
+                    <div class="status-step-text">
+                        <strong>Servis Aşamasında</strong>
+                        <span>Masanıza geliyor</span>
+                    </div>
+                </div>
+            </div>
+            <div class="order-status-countdown" id="order-status-countdown" style="display:none">
+                <i class="fas fa-hourglass-half"></i>
+                Tahmini: <span id="order-countdown-val">--:--</span>
+            </div>
+        </div>
+
         <div class="cart-footer">
             <div class="cart-total">Toplam: <span id="cart-total-price">₺0</span></div>
-            <button class="btn btn-primary btn-block"
-                onclick="alert('Sipariş sistemi şu an test aşamasındadır. Ödeme altyapısı yakında eklenecektir!')">Siparişi
-                Tamamla</button>
+            <button class="btn btn-primary btn-block" id="checkout-btn">Siparişi Tamamla</button>
         </div>
     </div>
 
@@ -361,6 +464,40 @@
         <i class="fas fa-shopping-cart"></i>
         <span id="cart-count" class="cart-count">0</span>
     </button>
+
+    <!-- ==================== CHECKOUT MODAL ==================== -->
+    <div id="checkout-modal" class="checkout-modal-overlay" style="display:none">
+        <div class="checkout-modal-box">
+            <button class="checkout-modal-close" id="checkout-modal-close"><i class="fas fa-times"></i></button>
+            <div class="checkout-modal-header">
+                <div class="checkout-modal-icon"><i class="fas fa-utensils"></i></div>
+                <h2>Siparişi Onayla</h2>
+                <p>Bilgilerinizi girin, siparişiniz mutfağa iletilsin.</p>
+            </div>
+            <div class="checkout-modal-body">
+                <div class="checkout-field-group">
+                    <label for="co-name"><i class="fas fa-user"></i> Adınız Soyadınız</label>
+                    <input type="text" id="co-name" class="checkout-input" placeholder="Örn: Ümitcan Çınar" required>
+                </div>
+                <div class="checkout-field-group">
+                    <label for="co-phone"><i class="fas fa-phone"></i> Telefon Numaranız</label>
+                    <input type="tel" id="co-phone" class="checkout-input" placeholder="05XX XXX XX XX" required>
+                </div>
+                <div class="checkout-field-group">
+                    <label for="co-table"><i class="fas fa-chair"></i> Masa Numaranız</label>
+                    <input type="number" id="co-table" class="checkout-input" placeholder="Masanızın üzerindeki numara"
+                        min="1">
+                </div>
+                <div class="checkout-summary" id="checkout-summary">
+                    <!-- Sepet özeti buraya gelir -->
+                </div>
+            </div>
+            <button class="btn btn-primary btn-block" id="checkout-submit-btn">
+                <i class="fas fa-paper-plane"></i> Siparişi Gönder
+            </button>
+            <p class="checkout-error" id="checkout-error"></p>
+        </div>
+    </div>
 
     <footer class="footer">
         <div class="container">
@@ -409,7 +546,7 @@
                 <p>&copy; 2026 Restaurant Yönetim. Tüm hakları saklıdır.</p>
                 <div class="developer-signature">
                     <p>Designed And Developed By
-                        <span class="cooking-author">
+                        <span class="cooking-author" id="staff-login-trigger" title="" style="cursor:pointer">
                             <span class="pan"><i class="fas fa-fire"></i></span>
                             <span class="letters">
                                 <span class="letter">U</span><span class="letter">M</span><span
@@ -420,6 +557,23 @@
                             </span>
                         </span>
                     </p>
+                    <!-- STAFF LOGIN DROPDOWN — Gizli -->
+                    <div id="staff-login-dropdown" class="staff-login-dropdown hidden">
+                        <a href="admin.html" target="_blank" class="staff-login-option">
+                            <i class="fas fa-user-shield"></i>
+                            <div>
+                                <strong>Admin Paneli</strong>
+                                <span>CMS &amp; İçerik Yönetimi</span>
+                            </div>
+                        </a>
+                        <a href="kitchen.html" target="_blank" class="staff-login-option">
+                            <i class="fas fa-fire"></i>
+                            <div>
+                                <strong>Mutfak Paneli</strong>
+                                <span>Canlı Sipariş Takibi</span>
+                            </div>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

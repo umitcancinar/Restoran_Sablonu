@@ -64,6 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
         'panel-overview': 'Özet Tablo',
         'panel-reservations': 'Rezervasyonlar',
         'panel-orders': 'Siparişler',
+        'panel-stories': 'Şefin Günlüğü — Stories',
+        'panel-tablemap': 'Masa Haritası Yönetimi',
         'panel-navbar': 'Navigasyon Menüsü',
         'panel-hero': 'Ana Ekran (Hero)',
         'panel-about': 'Hakkımızda',
@@ -135,11 +137,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. FIREBASE STATE & INIT
     // ========================================
     let appState = {
-        settings: {}, res: {}, orders: {}, nav: [], menu: [], gallery: []
+        settings: {}, res: {}, orders: {}, nav: [], menu: [], gallery: [], stories: [], tablemap: []
     };
 
     function initDashboard() {
-        if (typeof db === 'undefined') return; // Ensure Firebase is initialized
+        if (typeof db === 'undefined') return;
 
         db.ref('cms/settings').on('value', snap => {
             appState.settings = snap.val() || {};
@@ -164,6 +166,14 @@ document.addEventListener('DOMContentLoaded', () => {
         db.ref('cms/gallery').on('value', snap => {
             appState.gallery = snap.val() || defaultGallery;
             loadGallery(); loadStats();
+        });
+        db.ref('cms/stories').on('value', snap => {
+            appState.stories = snap.val() || [];
+            loadStoriesList();
+        });
+        db.ref('cms/tablemap').on('value', snap => {
+            appState.tablemap = snap.val() || [];
+            loadTablemapList();
         });
     }
 
@@ -227,24 +237,28 @@ document.addEventListener('DOMContentLoaded', () => {
         const resEntries = Object.entries(appState.res).sort((a, b) => b[1].timestamp - a[1].timestamp);
 
         if (resEntries.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="empty-cell">Henüz rezervasyon bulunmuyor.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="empty-cell">Henüz rezervasyon bulunmuyor.</td></tr>`;
             return;
         }
-        tbody.innerHTML = resEntries.map(([key, r]) => `
+        tbody.innerHTML = resEntries.map(([key, r]) => {
+            const statusMap = { 'beklemede': 'Bekliyor', 'onaylandi': 'Onaylandı', 'iptal': 'İptal' };
+            const statusClass = r.status === 'onaylandi' ? 'status-badge success' : r.status === 'iptal' ? 'status-badge danger' : 'status-badge';
+            return `
             <tr>
                 <td><strong>${esc(r.date)}</strong><br>${esc(r.time)}</td>
                 <td>${esc(r.name)}</td>
                 <td>${esc(r.phone)}</td>
                 <td>${esc(r.guests)}</td>
+                <td><small>${esc(r.tableLabel || r.tableId || '-')}</small></td>
                 <td>${esc(r.note)}</td>
-                <td><span class="status-badge">Bekliyor</span></td>
-                <td>
-                    <button class="btn-icon-danger" onclick="deleteReservation('${esc(key)}')" title="Sil">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                <td><span class="${statusClass}">${statusMap[r.status] || 'Bekliyor'}</span></td>
+                <td style="display:flex;gap:4px;flex-wrap:wrap">
+                    ${r.status !== 'onaylandi' ? `<button class="btn-icon-edit" onclick="approveReservation('${esc(key)}')" title="Onayla"><i class="fas fa-check"></i></button>` : ''}
+                    ${r.status === 'onaylandi' ? `<button class="btn-icon-edit" style="background:var(--warning-dim);color:var(--warning)" onclick="freeReservation('${esc(key)}')" title="Masayı Boşalt"><i class="fas fa-lock-open"></i></button>` : ''}
+                    <button class="btn-icon-danger" onclick="deleteReservation('${esc(key)}')" title="Sil"><i class="fas fa-trash"></i></button>
                 </td>
-            </tr>
-        `).join('');
+            </tr>`;
+        }).join('');
     }
 
     window.deleteReservation = async (key) => {
@@ -252,6 +266,20 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!ok) return;
         db.ref('cms/reservations/' + key).remove();
         showToast('Rezervasyon silindi!');
+    };
+
+    window.approveReservation = async (key) => {
+        const ok = await showConfirm('Rezervasyonu Onayla', 'Bu rezervasyonu onaylamak ve masayı rezerve etmek istiyor musunuz?');
+        if (!ok) return;
+        db.ref('cms/reservations/' + key + '/status').set('onaylandi');
+        showToast('Rezervasyon onaylandı — masa rezerve edildi!');
+    };
+
+    window.freeReservation = async (key) => {
+        const ok = await showConfirm('Masayı Boşalt', 'Bu rezervasyonu iptal edip masayı müsait durumuna getirmek istiyor musunuz?');
+        if (!ok) return;
+        db.ref('cms/reservations/' + key + '/status').set('iptal');
+        showToast('Masa boşaltıldı!');
     };
 
     document.getElementById('clear-res-btn').addEventListener('click', async () => {
@@ -264,31 +292,53 @@ document.addEventListener('DOMContentLoaded', () => {
     // ========================================
     // 7.5. ORDERS
     // ========================================
+    const ORDER_STATUS_MAP = {
+        'siparis_alindi': { label: 'Sipariş Alındı', cls: 'status-badge warning' },
+        'hazirlaniyor': { label: 'Hazırlanıyor', cls: 'status-badge info' },
+        'serviste': { label: 'Serviste', cls: 'status-badge success' }
+    };
+
     function loadOrders() {
         const tbody = document.getElementById('orders-tbody');
         if (!tbody) return;
         const ordersEntries = Object.entries(appState.orders).sort((a, b) => b[1].timestamp - a[1].timestamp);
 
         if (ordersEntries.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="empty-cell">Henüz sipariş bulunmuyor.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="empty-cell">Henüz sipariş bulunmuyor.</td></tr>`;
             return;
         }
-        tbody.innerHTML = ordersEntries.map(([key, o]) => `
+        tbody.innerHTML = ordersEntries.map(([key, o]) => {
+            const status = o.status || 'siparis_alindi';
+            const sm = ORDER_STATUS_MAP[status] || { label: status, cls: 'status-badge' };
+            return `
             <tr>
-                <td><strong>${esc(o.date)}</strong><br>${esc(o.time)}</td>
-                <td>${esc(o.customerName)}</td>
-                <td>${esc(o.customerPhone)}</td>
-                <td>₺${esc(o.totalPrice)}</td>
-                <td><small>${Array.isArray(o.items) ? o.items.map(i => esc(i.name) + ' (x' + esc(i.quantity) + ')').join(', ') : ''}</small></td>
-                <td><span class="status-badge">Hazırlanıyor</span></td>
+                <td><strong>${esc(o.date || '')}</strong><br>${esc(o.time || '')}</td>
+                <td>${esc(o.customerName || '')}</td>
+                <td>${esc(o.customerPhone || '')}</td>
+                <td>${o.tableNumber ? `<span class="status-badge" style="background:rgba(201,168,76,0.15);color:var(--gold)">Masa ${esc(String(o.tableNumber))}</span>` : '<span style="color:var(--text-muted)">-</span>'}</td>
+                <td>₺${esc(String(o.totalPrice || ''))}</td>
+                <td><small>${Array.isArray(o.items) ? o.items.map(i => esc(i.name) + ' (x' + esc(String(i.quantity)) + ')').join(', ') : ''}</small></td>
+                <td>
+                    <select class="order-status-select" onchange="updateOrderStatus('${esc(key)}', this.value)" style="font-size:0.8rem;padding:4px 8px;border-radius:6px;border:1px solid var(--border-color);background:var(--card-bg);color:var(--text-primary);font-family:inherit">
+                        <option value="siparis_alindi" ${status === 'siparis_alindi' ? 'selected' : ''}>Sipariş Alındı</option>
+                        <option value="hazirlaniyor"  ${status === 'hazirlaniyor' ? 'selected' : ''}>Hazırlanıyor</option>
+                        <option value="serviste"      ${status === 'serviste' ? 'selected' : ''}>Serviste</option>
+                    </select>
+                </td>
                 <td>
                     <button class="btn-icon-danger" onclick="deleteOrder('${esc(key)}')" title="Sil">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>
-            </tr>
-        `).join('');
+            </tr>`;
+        }).join('');
     }
+
+    window.updateOrderStatus = (key, newStatus) => {
+        db.ref(`cms/orders/${key}/status`).set(newStatus)
+            .then(() => showToast('Sipariş durumu güncellendi!'))
+            .catch(() => showToast('Güncelleme hatası!', 'error'));
+    };
 
     window.deleteOrder = async (key) => {
         const ok = await showConfirm('Siparişi Sil', 'Bu siparişi silmek istediğinize emin misiniz?');
@@ -504,13 +554,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('add-menu-form').addEventListener('submit', (e) => {
         e.preventDefault();
+        const waitRaw = parseInt(v('menu-waittime')) || 0;
         const newItem = {
             name: v('menu-name'),
             category: v('menu-cat'),
             price: v('menu-price'),
             img: v('menu-img'),
             desc: v('menu-desc'),
-            badge: v('menu-badge')
+            badge: v('menu-badge'),
+            waitTime: waitRaw > 0 ? waitRaw : 0
         };
         const menu = [...appState.menu];
         menu.push(newItem);
@@ -553,19 +605,25 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
             <div class="form-field"><label>Görsel URL</label><input type="text" id="em-mi" class="field-input" value="${item.img}"></div>
             <div class="form-field"><label>Açıklama</label><textarea id="em-md" class="field-input field-textarea" rows="2">${item.desc}</textarea></div>
-            <div class="form-field">
-                <label>Rozet</label>
-                <select id="em-mb" class="field-input">
-                    <option value="" ${!item.badge ? 'selected' : ''}>Yok</option>
-                    <option value="Şefin Tavsiyesi" ${item.badge === 'Şefin Tavsiyesi' ? 'selected' : ''}>Şefin Tavsiyesi</option>
-                    <option value="Yeni" ${item.badge === 'Yeni' ? 'selected' : ''}>Yeni</option>
-                    <option value="Popüler" ${item.badge === 'Popüler' ? 'selected' : ''}>Popüler</option>
-                    <option value="Özel" ${item.badge === 'Özel' ? 'selected' : ''}>Özel</option>
-                </select>
+            <div class="form-row">
+                <div class="form-field">
+                    <label>Rozet</label>
+                    <select id="em-mb" class="field-input">
+                        <option value="" ${!item.badge ? 'selected' : ''}>Yok</option>
+                        <option value="Şefin Tavsiyesi" ${item.badge === 'Şefin Tavsiyesi' ? 'selected' : ''}>Şefin Tavsiyesi</option>
+                        <option value="Yeni" ${item.badge === 'Yeni' ? 'selected' : ''}>Yeni</option>
+                        <option value="Popüler" ${item.badge === 'Popüler' ? 'selected' : ''}>Popüler</option>
+                        <option value="Özel" ${item.badge === 'Özel' ? 'selected' : ''}>Özel</option>
+                    </select>
+                </div>
+                <div class="form-field">
+                    <label><i class="fas fa-hourglass-half"></i> Bekleme Süresi (dk)</label>
+                    <input type="number" id="em-mwt" class="field-input" value="${item.waitTime || 0}" min="0" max="120">
+                </div>
             </div>
         `, () => {
             const menu = [...appState.menu];
-            menu[i] = { name: v('em-mn'), category: v('em-mc'), price: v('em-mp'), img: v('em-mi'), desc: v('em-md'), badge: v('em-mb') };
+            menu[i] = { name: v('em-mn'), category: v('em-mc'), price: v('em-mp'), img: v('em-mi'), desc: v('em-md'), badge: v('em-mb'), waitTime: parseInt(v('em-mwt')) || 0 };
             db.ref('cms/menu').set(menu);
             showToast('Ürün güncellendi!');
         });
@@ -710,7 +768,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.getElementById('save-general-btn').addEventListener('click', () => {
-        updateSettings({ logoText: v('cms-logo-text'), pageTitle: v('cms-page-title') });
+        const newTitle = v('cms-page-title');
+        updateSettings({ logoText: v('cms-logo-text'), pageTitle: newTitle });
         showToast('Genel ayarlar kaydedildi!');
     });
 
@@ -766,6 +825,140 @@ document.addEventListener('DOMContentLoaded', () => {
         db.ref('cms/menu').remove();
         showToast('Site varsayılanlara sıfırlandı!');
     });
+
+    // ========================================
+    // 20. STORIES CRUD
+    // ========================================
+    function loadStoriesList() {
+        const ul = document.getElementById('stories-admin-list');
+        if (!ul) return;
+        const stories = Array.isArray(appState.stories) ? appState.stories : [];
+        if (stories.length === 0) {
+            ul.innerHTML = '<li class="empty-state">Henüz story yok. Eklemek için formu kullanın.</li>';
+            return;
+        }
+        ul.innerHTML = stories.map((s, i) => `
+            <li class="sortable-item">
+                <div class="item-text">
+                    <span class="item-label">${esc(s.title)}</span>
+                    <span class="item-sub">${esc(s.type || 'image')} — <a href="${esc(s.mediaUrl)}" target="_blank" style="color:var(--primary)">Önizle</a></span>
+                </div>
+                <div class="item-actions">
+                    <button class="btn-icon-danger" onclick="deleteStory(${i})" title="Sil"><i class="fas fa-trash"></i></button>
+                </div>
+            </li>
+        `).join('');
+    }
+
+    const addStoryBtn = document.getElementById('add-story-btn');
+    if (addStoryBtn) {
+        addStoryBtn.addEventListener('click', () => {
+            const title = document.getElementById('story-title')?.value.trim();
+            const mediaUrl = document.getElementById('story-media-url')?.value.trim();
+            const type = document.getElementById('story-media-type')?.value || 'image';
+            if (!title || !mediaUrl) { showToast('Başlık ve medya URL zorunlu!', 'error'); return; }
+            const stories = Array.isArray(appState.stories) ? [...appState.stories] : [];
+            stories.push({ title, mediaUrl, type, createdAt: Date.now() });
+            db.ref('cms/stories').set(stories)
+                .then(() => {
+                    showToast('Story eklendi!');
+                    if (document.getElementById('story-title')) document.getElementById('story-title').value = '';
+                    if (document.getElementById('story-media-url')) document.getElementById('story-media-url').value = '';
+                });
+        });
+    }
+
+    window.deleteStory = async (i) => {
+        const ok = await showConfirm('Story Sil', 'Bu story\'yi silmek istiyor musunuz?');
+        if (!ok) return;
+        const stories = Array.isArray(appState.stories) ? [...appState.stories] : [];
+        stories.splice(i, 1);
+        db.ref('cms/stories').set(stories);
+        showToast('Story silindi!');
+    };
+
+    // ========================================
+    // 21. TABLEMAP CRUD
+    // ========================================
+    function getDefaultTablemapAdmin() {
+        return [
+            { id: 't1', zone: 'Teras', label: 'T1', capacity: 2 },
+            { id: 't2', zone: 'Teras', label: 'T2', capacity: 2 },
+            { id: 't3', zone: 'Teras', label: 'T3', capacity: 4 },
+            { id: 't4', zone: 'Cam Kenarı', label: 'C1', capacity: 2 },
+            { id: 't5', zone: 'Cam Kenarı', label: 'C2', capacity: 4 },
+            { id: 't6', zone: 'Cam Kenarı', label: 'C3', capacity: 2 },
+            { id: 't7', zone: 'Şömine', label: 'S1', capacity: 6 },
+            { id: 't8', zone: 'Şömine', label: 'S2', capacity: 4 },
+            { id: 't9', zone: 'İç Alan', label: 'İ1', capacity: 2 },
+            { id: 't10', zone: 'İç Alan', label: 'İ2', capacity: 4 },
+            { id: 't11', zone: 'İç Alan', label: 'İ3', capacity: 2 },
+            { id: 't12', zone: 'VIP', label: 'V1', capacity: 8 }
+        ];
+    }
+
+    function loadTablemapList() {
+        const ul = document.getElementById('tablemap-admin-list');
+        if (!ul) return;
+        const tables = Array.isArray(appState.tablemap) ? appState.tablemap : [];
+        if (tables.length === 0) {
+            ul.innerHTML = '<li class="empty-state">Masa haritası boş. Varsayılanları yüklemek için sıfırla butonunu kullanın.</li>';
+            return;
+        }
+        const zoneColors = { 'Teras': '#22c55e', 'Cam Kenarı': '#3b82f6', 'Şömine': '#f97316', 'İç Alan': '#a855f7', 'VIP': '#C9A84C' };
+        ul.innerHTML = tables.map((t, i) => `
+            <li class="sortable-item">
+                <div class="item-text">
+                    <span class="item-label" style="display:flex;align-items:center;gap:6px">
+                        <span style="width:10px;height:10px;border-radius:50%;background:${zoneColors[t.zone] || '#888'}"></span>
+                        ${esc(t.label)} — ${esc(t.zone)}
+                    </span>
+                    <span class="item-sub">${t.capacity} kişilik</span>
+                </div>
+                <div class="item-actions">
+                    <button class="btn-icon-danger" onclick="deleteTable(${i})" title="Sil"><i class="fas fa-trash"></i></button>
+                </div>
+            </li>
+        `).join('');
+    }
+
+    const addTableBtn = document.getElementById('add-table-btn');
+    if (addTableBtn) {
+        addTableBtn.addEventListener('click', () => {
+            const label = document.getElementById('tm-label')?.value.trim();
+            const capacity = parseInt(document.getElementById('tm-cap')?.value) || 2;
+            const zone = document.getElementById('tm-zone')?.value || 'İç Alan';
+            if (!label) { showToast('Masa etiketi zorunlu!', 'error'); return; }
+            const tables = Array.isArray(appState.tablemap) ? [...appState.tablemap] : [];
+            const id = 't' + Date.now();
+            tables.push({ id, zone, label, capacity });
+            db.ref('cms/tablemap').set(tables)
+                .then(() => {
+                    showToast('Masa eklendi!');
+                    if (document.getElementById('tm-label')) document.getElementById('tm-label').value = '';
+                    if (document.getElementById('tm-cap')) document.getElementById('tm-cap').value = '';
+                });
+        });
+    }
+
+    window.deleteTable = async (i) => {
+        const ok = await showConfirm('Masayı Sil', 'Bu masayı haritadan silmek istiyor musunuz?');
+        if (!ok) return;
+        const tables = Array.isArray(appState.tablemap) ? [...appState.tablemap] : [];
+        tables.splice(i, 1);
+        db.ref('cms/tablemap').set(tables);
+        showToast('Masa silindi!');
+    };
+
+    const resetTablemapBtn = document.getElementById('reset-tablemap-btn');
+    if (resetTablemapBtn) {
+        resetTablemapBtn.addEventListener('click', async () => {
+            const ok = await showConfirm('Haritayı Sıfırla', 'Masa haritası varsayılan düzene dönecek. Emin misiniz?');
+            if (!ok) return;
+            db.ref('cms/tablemap').set(getDefaultTablemapAdmin());
+            showToast('Masa haritası sıfırlandı!');
+        });
+    }
 
     // ========================================
     // 18. EDIT MODAL

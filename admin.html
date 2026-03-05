@@ -70,6 +70,12 @@
                         <i class="fas fa-shopping-bag"></i><span>Siparişler</span>
                         <span class="nav-badge" id="orders-badge">0</span>
                     </a>
+                    <a class="nav-item" data-panel="panel-stories">
+                        <i class="fas fa-circle-notch"></i><span>Şefin Günlüğü</span>
+                    </a>
+                    <a class="nav-item" data-panel="panel-tablemap">
+                        <i class="fas fa-map"></i><span>Masa Haritası</span>
+                    </a>
                 </div>
                 <div class="nav-group">
                     <span class="nav-group-label">SİTE İÇERİĞİ</span>
@@ -232,6 +238,7 @@
                                     <th>Müşteri</th>
                                     <th>Telefon</th>
                                     <th>Kişi</th>
+                                    <th>Masa</th>
                                     <th>Notlar</th>
                                     <th>Durum</th>
                                     <th>İşlem</th>
@@ -258,6 +265,7 @@
                                     <th>Tarih / Saat</th>
                                     <th>Müşteri</th>
                                     <th>Telefon</th>
+                                    <th>Masa</th>
                                     <th>Tutar</th>
                                     <th>Sipariş Detayı</th>
                                     <th>Durum</th>
@@ -466,6 +474,12 @@
                                         <option value="Özel">Özel</option>
                                     </select>
                                 </div>
+                                <div class="form-field">
+                                    <label><i class="fas fa-hourglass-half"></i> Tahmini Bekleme Süresi (dk)</label>
+                                    <input type="number" id="menu-waittime" class="field-input" placeholder="15" min="0"
+                                        max="120">
+                                    <p class="field-hint">0 bırakırsan bekleme süresi gösterilmez.</p>
+                                </div>
                                 <button type="submit" class="btn-primary w-full">
                                     <i class="fas fa-plus"></i> Menüye Ekle
                                 </button>
@@ -672,6 +686,85 @@
                         <button class="btn-primary" id="change-pass-btn">
                             <i class="fas fa-key"></i> Şifreyi Güncelle
                         </button>
+                    </div>
+                </section>
+
+                <!-- STORIES PANEL -->
+                <section class="panel hidden" id="panel-stories">
+                    <div class="panel-header">
+                        <h1>Şefin Günlüğü — Stories</h1>
+                    </div>
+                    <div class="two-col">
+                        <div class="edit-card">
+                            <h3><i class="fas fa-plus-circle"></i> Yeni Story Ekle</h3>
+                            <div class="form-field">
+                                <label>Başlık</label>
+                                <input type="text" id="story-title" class="field-input"
+                                    placeholder="Bugünün Özel Tarifi">
+                            </div>
+                            <div class="form-field">
+                                <label>Medya URL (Görsel veya Video)</label>
+                                <input type="text" id="story-media-url" class="field-input" placeholder="https://...">
+                            </div>
+                            <div class="form-field">
+                                <label>Medya Türü</label>
+                                <select id="story-media-type" class="field-input">
+                                    <option value="image">Görsel (image)</option>
+                                    <option value="video">Video (mp4/webm URL)</option>
+                                </select>
+                            </div>
+                            <button class="btn-primary" id="add-story-btn">
+                                <i class="fas fa-plus"></i> Story Ekle
+                            </button>
+                        </div>
+                        <div class="edit-card">
+                            <h3><i class="fas fa-list"></i> Mevcut Stories</h3>
+                            <ul class="sortable-list" id="stories-admin-list"></ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TABLE MAP PANEL -->
+                <section class="panel hidden" id="panel-tablemap">
+                    <div class="panel-header">
+                        <h1>Masa Haritası Yönetimi</h1>
+                    </div>
+                    <div class="two-col">
+                        <div class="edit-card">
+                            <h3><i class="fas fa-plus-circle"></i> Yeni Masa Ekle</h3>
+                            <div class="form-row">
+                                <div class="form-field">
+                                    <label>Masa Etiketi (Örn: C1)</label>
+                                    <input type="text" id="tm-label" class="field-input" placeholder="C1">
+                                </div>
+                                <div class="form-field">
+                                    <label>Kapasite (Kişi)</label>
+                                    <input type="number" id="tm-cap" class="field-input" placeholder="4" min="1"
+                                        max="20">
+                                </div>
+                            </div>
+                            <div class="form-field">
+                                <label>Zone / Alan</label>
+                                <select id="tm-zone" class="field-input">
+                                    <option value="Teras">Teras</option>
+                                    <option value="Cam Kenarı">Cam Kenarı</option>
+                                    <option value="Şömine">Şömine</option>
+                                    <option value="İç Alan">İç Alan</option>
+                                    <option value="VIP">VIP</option>
+                                </select>
+                            </div>
+                            <button class="btn-primary" id="add-table-btn">
+                                <i class="fas fa-plus"></i> Masa Ekle
+                            </button>
+                            <div class="divider"></div>
+                            <button class="btn-save" id="reset-tablemap-btn">
+                                <i class="fas fa-undo"></i> Varsayılan Haritaya Sıfırla
+                            </button>
+                        </div>
+                        <div class="edit-card">
+                            <h3><i class="fas fa-chair"></i> Mevcut Masalar</h3>
+                            <ul class="sortable-list" id="tablemap-admin-list"></ul>
+                        </div>
                     </div>
                 </section>
 

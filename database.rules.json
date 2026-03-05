@@ -12,7 +12,7 @@
         ".read": "auth != null",
         "$orderId": {
           ".write": "!data.exists() || auth != null",
-          ".validate": "auth != null || (newData.hasChildren(['customerName','customerPhone','totalPrice','timestamp']) && newData.child('customerName').isString() && newData.child('customerName').val().length > 0 && newData.child('totalPrice').isNumber() && newData.child('totalPrice').val() > 0)"
+          ".validate": "auth != null || (newData.hasChildren(['customerName','customerPhone','totalPrice','timestamp']) && newData.child('customerName').isString() && newData.child('customerName').val().length > 0 && newData.child('totalPrice').isNumber() && newData.child('totalPrice').val() >= 0)"
         }
       },
       "settings": {
@@ -28,6 +28,14 @@
         ".write": "auth != null"
       },
       "menu": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "stories": {
+        ".read": true,
+        ".write": "auth != null"
+      },
+      "tablemap": {
         ".read": true,
         ".write": "auth != null"
       }
