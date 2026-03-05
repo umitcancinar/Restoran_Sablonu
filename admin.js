@@ -172,8 +172,13 @@ document.addEventListener('DOMContentLoaded', () => {
             loadStoriesList();
         });
         db.ref('cms/tablemap').on('value', snap => {
-            appState.tablemap = snap.val() || [];
-            loadTablemapList();
+            const arr = snap.val();
+            if (!arr || (Array.isArray(arr) && arr.length === 0)) {
+                db.ref('cms/tablemap').set(getDefaultTablemapAdmin());
+            } else {
+                appState.tablemap = arr;
+                loadTablemapList();
+            }
         });
     }
 
